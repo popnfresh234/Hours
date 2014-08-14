@@ -1,0 +1,16 @@
+<resources>
+
+    <color name="white">#ffffff</color>
+    <color name="light_gray">#bbbbbb</color>
+	<color name="blue">#0000ff</color>
+    <color name="light_orange_button">#f8cb9a</color>
+    <color name="pressed_orange_button">#f9ab58</color>
+    <color name="focused_orange_button">#f8e4cd</color>
+    <color name="text_color">#d26f04</color>
+    <color name="light_orange_background">#f8e4cd</color>
+    <color name="swipeRefresh1">#f88509</color>
+    <color name="swipeRefresh2">#f9ab58</color>
+    <color name="swipeRefresh3">#f8e4cd</color>
+    <color name="swipeRefresh4">#f8cb9a</color>
+    <color name="dropDownMenuTextColor">#000000</color>
+</resources>
