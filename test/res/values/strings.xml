@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="menu_logout_label">Logout</string>
+    <string name="restaurant_title_hint">Enter Name</string>
+    <string name="restaurant_title_label">Name</string>
+    <string name="restaurant_address_label">Address</string>
+    <string name="restaurant_address_hint">Enter Address</string>
+    <string name="restaurant_phone_label">Phone Number</string>
+    <string name="restaurant_phone_hint">Enter Phone Number</string>
+    <string name="restaurant_notes_label">Notes</string>
+    <string name="restaurant_notes_hint">Enter Notes Here</string>
+    <string name="restaurant_picture_label">Picture</string>
+    <string name="picture_button_label">New Picture</string>
+    <string name="empty_view_text">Currently no restaurants, add some!</string>
+    <string name="add_restaurant">Add Restaurant</string>
+    <string name="new_restaurant">New Restaurant</string>
+    <string name="app_name">Hours</string>
+    <string name="title_activity_login">Login</string>
+    <string name="title_activity_restaurant">Restaurant</string>
+    <string name="title_activity_sign_up">Sign Up Activity</string>
+    <string name="title_activity_view_image">Restaurant Image</string>
+    <string name="username_hint">Username</string>
+    <string name="password_hint">Password</string>
+    <string name="login_button_label">SIGN IN</string>
+    <string name="sign_up_button_label">SIGN UP</string>
+    <string name="email_hint">Email</string>
+    <string name="sign_up_text">Don\'t have an account? Sign up!</string>
+    <string name="general_error_title">Error</string>
+    <string name="signup_error_message">Please make sure you enter a username, password, and email address!</string>
+    <string name="signup_error_title">Signup Error</string>
+    <string name="login_error_message">Please make sure you enter a username and password!</string>
+    <string name="login_error_title">Login Error</string>
+    <string name="connection_error">This app requires a network connection</string>
+    <string name="connection_error_title">No network connection</string>
+    <string name="edit_error_message">Only the original poster may edit this listing</string>
+    <string name="edit_error_title">Edit Error</string>
+    <string name="error_saving_title">Error Saving</string>
+    <string name="error_saving">There was an error saving</string>
+    <string name="external_storage_error">There was a problem accessing your device\'s external storage</string>
+    <string name="sunday_check_label">Sunday</string>
+    <string name="monday_check_label">Monday</string>
+    <string name="tuesday_check_label">Tuesday</string>
+    <string name="wednesday_check_label">Wednesday</string>
+    <string name="thursday_check_label">Thursday</string>
+    <string name="friday_check_label">Friday</string>
+    <string name="saturday_check_label">Saturday</string>
+    <string name="sunday_short">S</string>
+    <string name="monday_short">M</string>
+    <string name="tuesday_short">T</string>
+    <string name="wednesday_short">W</string>
+    <string name="thursday_short">T</string>
+    <string name="friday_short">F</string>
+    <string name="saturday_short">S</string>
+    <string name="delete_restaurant">Delete</string>
+    <string name="search_title">Search</string>
+    <string name="master_hours_label">Set All Hours</string>
+    <string name="master_open_label">Open</string>
+    <string name="master_close_label">Close</string>
+    <string name="save_button_label">SAVE</string>
+    <string name="cancel_button_label">CANCEL</string>
+    <string name="subtitle">Never Go Hungry Again</string>
+    <string name="content_desc_button_divider">Button Divider</string>
+    <string name="content_desc_restaurant_image">Restaurant Image</string>
+    <string name="content_desc_background_image">Background Image</string>
+        
+    <string-array name ="camera_choices">
+        <item>Take Picture</item>
+        <item>Choose Picture</item>
+    </string-array>
+        <string name="menu_my_restaurants_label">My Restaurants</string>
+        <string name="menu_all_restaurants_label">Show All Restaurants</string>
+
+</resources>

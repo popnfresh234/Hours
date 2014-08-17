@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="menu_logout_label">登出</string>
+    <string name="restaurant_title_hint">輸入店名</string>
+    <string name="restaurant_title_label">店名</string>
+    <string name="restaurant_address_label">地址</string>
+    <string name="restaurant_address_hint">輸入地址</string>
+    <string name="restaurant_phone_label">電話號碼</string>
+    <string name="restaurant_phone_hint">輸入電話號碼</string>
+    <string name="restaurant_notes_label">備註</string>
+    <string name="restaurant_notes_hint">輸入備註</string>
+    <string name="empty_view_text">目前還沒有餐廳資料, 快來建立一個!</string>
+    <string name="add_restaurant">新增餐廳</string>
+    <string name="new_restaurant">新增餐廳</string>
+    <string name="app_name">Hours</string>
+    <string name="title_activity_login">登入</string>
+    <string name="title_activity_restaurant">Restaurant</string>
+    <string name="title_activity_sign_up">Sign Up Activity</string>
+    <string name="title_activity_view_image">餐廳照片</string>
+    <string name="username_hint">用戶名</string>
+    <string name="password_hint">密碼</string>
+    <string name="login_button_label">註冊</string>
+    <string name="sign_up_button_label">註冊</string>
+    <string name="email_hint">Email</string>
+    <string name="sign_up_text">還沒有帳號嗎? 快來註冊!</string>
+    <string name="general_error_title">錯誤</string>
+    <string name="signup_error_message">請確認您輸入用戶名,密碼及電子信箱!</string>
+    <string name="signup_error_title">註冊錯誤</string>
+    <string name="login_error_message">請確認您輸入用戶名及密碼!</string>
+    <string name="login_error_title">登入錯誤</string>
+    <string name="connection_error">此app需要網路連線</string>
+    <string name="connection_error_title">沒有網路連線</string>
+    <string name="edit_error_message">只有原作者能編輯此餐廳</string>
+    <string name="edit_error_title">編輯錯誤</string>
+    <string name="error_saving_title">儲存錯誤</string>
+    <string name="error_saving">儲存錯誤</string>
+    <string name="external_storage_error">無法存取您的外部儲存裝置</string>
+    <string name="sunday_check_label">星期日</string>
+    <string name="monday_check_label">星期一</string>
+    <string name="tuesday_check_label">星期二</string>
+    <string name="wednesday_check_label">星期三</string>
+    <string name="thursday_check_label">星期四</string>
+    <string name="friday_check_label">星期五</string>
+    <string name="saturday_check_label">星期六</string>
+    <string name="sunday_short">日</string>
+    <string name="monday_short">一</string>
+    <string name="tuesday_short">二</string>
+    <string name="wednesday_short">三</string>
+    <string name="thursday_short">四</string>
+    <string name="friday_short">五</string>
+    <string name="saturday_short">六</string>
+    <string name="delete_restaurant">刪除</string>
+    <string name="master_hours_label">設定每日時間</string>
+    <string name="master_open_label">開門</string>
+    <string name="master_close_label">關門</string>
+    <string name="save_button_label">儲存</string>
+    <string name="cancel_button_label">取消</string>
+    <string name="subtitle">再也不吃閉門羹</string>
+    <string name="content_desc_button_divider">Button Divider</string>
+    <string name="search_title">搜尋</string>
+    <string name="content_desc_restaurant_image">餐廳照片</string>
+    <string name="restaurant_picture_label">照片</string>
+    <string name="picture_button_label">新增照片</string>
+    <string name="content_desc_background_image">背景照片</string>
+    <string-array name ="camera_choices">
+        <item>拍一張照</item>
+        <item>選擇照片</item>
+    </string-array>
+        <string name="menu_my_restaurants_label">我的餐廳</string>
+        <string name="menu_all_restaurants_label">顯示全部餐廳</string>
+        
+        
+
+</resources>
