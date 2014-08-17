@@ -8,8 +8,6 @@ import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
 
-import com.alex.hours.ParseConstants;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;

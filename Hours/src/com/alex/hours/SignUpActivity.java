@@ -115,12 +115,13 @@ public class SignUpActivity extends Activity {
 
 								if (e == null) {
 									// Success!
-									Intent intent = new Intent(
-											SignUpActivity.this,
-											MainActivity.class);
-									intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-									intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-									startActivity(intent);
+									//TODO start fragment instead of activity
+//									Intent intent = new Intent(
+//											SignUpActivity.this,
+//											RestaurantList.class);
+//									intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//									intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//									startActivity(intent);
 								} else {
 									AlertDialog.Builder builder = new AlertDialog.Builder(
 											SignUpActivity.this);

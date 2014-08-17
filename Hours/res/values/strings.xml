@@ -20,6 +20,7 @@
     <string name="title_activity_restaurant">Restaurant</string>
     <string name="title_activity_sign_up">Sign Up Activity</string>
     <string name="title_activity_view_image">Restaurant Image</string>
+    <string name="title_activity_main_activity">Welcome to Hours!</string>
     <string name="username_hint">Username</string>
     <string name="password_hint">Password</string>
     <string name="login_button_label">SIGN IN</string>
@@ -63,12 +64,22 @@
     <string name="content_desc_button_divider">Button Divider</string>
     <string name="content_desc_restaurant_image">Restaurant Image</string>
     <string name="content_desc_background_image">Background Image</string>
-        
-    <string-array name ="camera_choices">
+
+    <string-array name="camera_choices">
         <item>Take Picture</item>
         <item>Choose Picture</item>
     </string-array>
-        <string name="menu_my_restaurants_label">My Restaurants</string>
-        <string name="menu_all_restaurants_label">Show All Restaurants</string>
+
+    <string name="menu_my_restaurants_label">My Restaurants</string>
+    <string name="menu_all_restaurants_label">Show All Restaurants</string>
+    
+        <string-array name="titles_array">
+        <item>Search</item>
+        <item>All Restaurants</item>
+
+    </string-array>
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+
 
 </resources>

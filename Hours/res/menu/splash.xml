@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/action_my_restaurants"
+        android:title="@string/menu_my_restaurants_label">
+    </item>
+    <item
+        android:id="@+id/action_all_restaurants"
+        android:title="@string/menu_all_restaurants_label">
+    </item>
+    <item
+        android:id="@+id/action_logout"
+        android:title="@string/menu_logout_label">
+    </item>
+
+</menu>
