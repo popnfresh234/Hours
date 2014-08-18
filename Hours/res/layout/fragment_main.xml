@@ -5,7 +5,8 @@
     android:background="@drawable/background_fill"
     android:orientation="vertical" >
 
-    <ImageView style="@style/AuthBackgroundImage" />
+    <ImageView style="@style/AuthBackgroundImage"
+        android:contentDescription="@string/content_desc_background_image" />
 
     <TextView
         android:id="@+id/title"
@@ -18,7 +19,7 @@
 
         android:layout_below="@+id/title"
         android:gravity="center_horizontal"
-        android:text="Is It Open?"
+        android:text="@string/main_fragment_subtitle"
         android:textColor="@android:color/white"
         android:textSize="30sp" />
 
@@ -37,8 +38,8 @@
     <Button
         android:id="@+id/searchButton"
         style="@style/AuthButton"
-        android:layout_alignParentLeft="true"
         android:layout_below="@+id/editTextLayout"
-        android:text="Search" />
+        android:text="@string/search_title" />
+
 
 </RelativeLayout>

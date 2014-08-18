@@ -18,10 +18,13 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
 import android.telephony.PhoneNumberUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -37,7 +40,6 @@ import android.widget.ImageView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.alex.hours.R;
 import com.alex.hours.utilities.FileHelper;
 import com.alex.hours.utilities.ParseConstants;
 import com.parse.GetCallback;
@@ -96,6 +98,16 @@ public class RestaurantFragment extends Fragment implements
 	private ImageView mRestaurantImageView;
 	private Button mSaveButton;
 	private Button mCancelButton;
+	
+	
+
+	
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		// TODO Auto-generated method stub
+		super.onCreateOptionsMenu(menu, inflater);
+		menu.clear();
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -662,7 +674,13 @@ public class RestaurantFragment extends Fragment implements
 							if (getActivity() != null) {
 								getActivity().setResult(Activity.RESULT_OK);
 //								getActivity().finish();
-								getFragmentManager().popBackStack();
+//								getFragmentManager().popBackStack();
+								RestaurantListFragment allRestaurants = new RestaurantListFragment();
+								
+								FragmentManager fragmentManager = getFragmentManager();
+								fragmentManager.beginTransaction()
+										.replace(R.id.content_frame, allRestaurants)
+										.commit();
 							}
 						}
 
@@ -701,7 +719,12 @@ public class RestaurantFragment extends Fragment implements
 								if (getActivity() != null) {
 									getActivity().setResult(Activity.RESULT_OK);
 //									getActivity().finish();
-									getFragmentManager().popBackStack();
+//									getFragmentManager().popBackStack();
+									RestaurantListFragment allRestaurants = new RestaurantListFragment();
+									FragmentManager fragmentManager = getFragmentManager();
+									fragmentManager.beginTransaction()
+											.replace(R.id.content_frame, allRestaurants)
+											.commit();
 								}
 							}
 

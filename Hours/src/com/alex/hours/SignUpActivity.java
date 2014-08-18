@@ -14,7 +14,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 
-import com.alex.hours.R;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
@@ -114,14 +113,13 @@ public class SignUpActivity extends Activity {
 								mProgressBar.setVisibility(View.INVISIBLE);
 
 								if (e == null) {
-									// Success!
-									//TODO start fragment instead of activity
-//									Intent intent = new Intent(
-//											SignUpActivity.this,
-//											RestaurantList.class);
-//									intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//									intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//									startActivity(intent);
+									// Success!			
+									Intent intent = new Intent(
+											SignUpActivity.this,
+											MainActivity.class);
+									intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+									intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+									startActivity(intent);
 								} else {
 									AlertDialog.Builder builder = new AlertDialog.Builder(
 											SignUpActivity.this);

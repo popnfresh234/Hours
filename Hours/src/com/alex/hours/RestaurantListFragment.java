@@ -57,7 +57,6 @@ public class RestaurantListFragment extends ListFragment {
 	private ParseUser mCurrentUser;
 	private String mCurrentUserId;
 
-	
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -81,17 +80,17 @@ public class RestaurantListFragment extends ListFragment {
 		}
 
 		getActivity().setProgressBarIndeterminateVisibility(true);
-		//If no argument is passed, show all restaurants
-		if(getArguments()==null){
-		queryParseAndSetAdapater();
+		// If no argument is passed, show all restaurants
+		if (getArguments() == null) {
+			queryParseAndSetAdapater();
 		}
-		//If an argument is passed, check its query code and query accordingly
-		if(getArguments()!=null){
-			String queryCode = (String)getArguments().get(QUERY_CODE);
-			if(queryCode.equals(MY_RESTAURATNS)){
+		// If an argument is passed, check its query code and query accordingly
+		if (getArguments() != null) {
+			String queryCode = (String) getArguments().get(QUERY_CODE);
+			if (queryCode.equals(MY_RESTAURATNS)) {
 				queryParseForMyRestaurants();
 			}
-			if(queryCode.equals(SEARCH)){
+			if (queryCode.equals(SEARCH)) {
 				String query = getArguments().getString(QUERY);
 				Log.i("QUERY", query);
 				queryParseWithSearch(query);
@@ -220,8 +219,10 @@ public class RestaurantListFragment extends ListFragment {
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);
+		// clear the menu
+		menu.clear();
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getActivity().getMenuInflater().inflate(R.menu.main, menu);
+		getActivity().getMenuInflater().inflate(R.menu.restaurant_list, menu);
 		// Get search view
 		SearchManager searchManager = (SearchManager) getActivity()
 				.getSystemService(Context.SEARCH_SERVICE);
@@ -251,14 +252,14 @@ public class RestaurantListFragment extends ListFragment {
 			@Override
 			public boolean onQueryTextSubmit(String query) {
 				getActivity().setProgressBarIndeterminateVisibility(true);
-				
+
 				queryParseWithSearch(query);
 				return false;
 			}
 
 			@Override
 			public boolean onQueryTextChange(String newText) {
-				//mActionBarSearchQuery = newText.toLowerCase();
+				// mActionBarSearchQuery = newText.toLowerCase();
 				Log.i("QUERY", "WTF");
 				queryParseWithSearch(newText.toLowerCase());
 				return false;
@@ -305,15 +306,15 @@ public class RestaurantListFragment extends ListFragment {
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		Restaurant r = ((RestaurantAdapter) getListAdapter()).getItem(position);
 		Bundle args = new Bundle();
-		args.putString(RestaurantFragment.EXTRA_RESTAURANT_ID,
-				r.getObjectId());
-		FragmentManager fm = getFragmentManager();
-		FragmentTransaction ft = fm.beginTransaction();
-		RestaurantFragment raf = new RestaurantFragment();
-		raf.setArguments(args);
-		ft.replace(R.id.content_frame, raf);
-		ft.addToBackStack("");
-		ft.commit();
+		args.putString(RestaurantFragment.EXTRA_RESTAURANT_ID, r.getObjectId());
+		RestaurantFragment restaurantFragment = new RestaurantFragment();
+		restaurantFragment.setArguments(args);
+		FragmentManager fragmentManager = getFragmentManager();
+		fragmentManager.popBackStack();
+		fragmentManager.beginTransaction()
+				.replace(R.id.content_frame, restaurantFragment).addToBackStack(null).commit();
+		
+		
 		// Log.i("NAME", r.getTitle());
 		// Intent i = new Intent(getActivity(), RestaurantActivity.class);
 		// i.putExtra(RestaurantFragment.EXTRA_RESTAURANT_ID,
@@ -322,13 +323,13 @@ public class RestaurantListFragment extends ListFragment {
 	}
 
 	private void startRestaurantActivity() {
-//		Intent i = new Intent(getActivity(), RestaurantActivity.class);
-//		startActivityForResult(i, 0);
+		// Intent i = new Intent(getActivity(), RestaurantActivity.class);
+		// startActivityForResult(i, 0);
 		FragmentManager fm = getFragmentManager();
 		FragmentTransaction ft = fm.beginTransaction();
 		RestaurantFragment raf = new RestaurantFragment();
 		ft.replace(R.id.content_frame, raf);
-		ft.addToBackStack("");
+
 		ft.commit();
 	}
 
@@ -408,8 +409,7 @@ public class RestaurantListFragment extends ListFragment {
 			ParseQuery<Restaurant> queryTitle = new ParseQuery<Restaurant>(
 					"Restaurant");
 			queryTitle.whereContains(
-					ParseConstants.KEY_RESTAURANT_LOWERCASE_TITLE,
-					search);
+					ParseConstants.KEY_RESTAURANT_LOWERCASE_TITLE, search);
 
 			ParseQuery<Restaurant> queryAddress = new ParseQuery<Restaurant>(
 					"Restaurant");
@@ -547,7 +547,7 @@ public class RestaurantListFragment extends ListFragment {
 			queryParseAndSetAdapater();
 		}
 	}
-	
+
 	@Override
 	public void onPause() {
 		// TODO Auto-generated method stub

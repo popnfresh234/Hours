@@ -31,6 +31,8 @@ public class MainActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		getWindow().requestFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.activity_main);
+		
+		
 
 		mTitle = mDrawerTitle = getTitle();
 		mTitles = getResources().getStringArray(R.array.titles_array);
@@ -120,6 +122,7 @@ public class MainActivity extends FragmentActivity {
 		case 0:
 			MainActivityFragment mainActivity = new MainActivityFragment();
 			fragmentManager = getSupportFragmentManager();
+			fragmentManager.popBackStack();
 			fragmentManager.beginTransaction()
 					.replace(R.id.content_frame, mainActivity)
 					.commit();
@@ -127,8 +130,9 @@ public class MainActivity extends FragmentActivity {
 		case 1:
 			RestaurantListFragment allRestaurants = new RestaurantListFragment();
 			fragmentManager = getSupportFragmentManager();
+			fragmentManager.popBackStack();
 			fragmentManager.beginTransaction()
-					.replace(R.id.content_frame, allRestaurants)
+					.add(R.id.content_frame, allRestaurants)
 					.addToBackStack(null).commit();
 			break;
 		}

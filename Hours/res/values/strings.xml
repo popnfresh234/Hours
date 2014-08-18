@@ -74,12 +74,13 @@
     <string name="menu_all_restaurants_label">Show All Restaurants</string>
     
         <string-array name="titles_array">
-        <item>Search</item>
+        <item>Home</item>
         <item>All Restaurants</item>
 
     </string-array>
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
+    <string name="main_fragment_subtitle">Is It Open?</string>
 
 
 </resources>

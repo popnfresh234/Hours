@@ -10,8 +10,6 @@ import android.widget.TextView;
 
 import com.alex.hours.R;
 import com.alex.hours.Restaurant;
-import com.alex.hours.R.id;
-import com.alex.hours.R.layout;
 
 public class RestaurantAdapter extends ArrayAdapter<Restaurant> {
 
