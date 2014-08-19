@@ -52,14 +52,18 @@ import com.parse.SaveCallback;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-public class RestaurantFragment extends Fragment implements
-		OnClickListener, OnCheckedChangeListener, OnFocusChangeListener {
+public class RestaurantFragment extends Fragment implements OnClickListener,
+		OnCheckedChangeListener, OnFocusChangeListener {
 
+	public static final String NEW_RESTAURANT_FROM_LIST = "new_restaurant_from_list";
+	public static final String NEW_RESTAURANT_FROM_HOME = "new_restaurant_from_home";
 	public static final String EXTRA_RESTAURANT_ID = "com.alex.hours.extra.restaurant.id";
 	private static final String mFileType = ParseConstants.KEY_FILE_TYPE;
 	public static final int TAKE_PHOTO_REQUEST = 0;
 	public static final int PICK_PHOTO_REQUEST = 1;
 	public static final int MEDIA_TYPE_IMAGE = 2;
+	public static final String MY_RESTAURNT = "myrestaurant";
+	public static final String ALL_RESTAURANTS = "allrestauratns";
 
 	private ParseACL parseACL;
 
@@ -98,10 +102,7 @@ public class RestaurantFragment extends Fragment implements
 	private ImageView mRestaurantImageView;
 	private Button mSaveButton;
 	private Button mCancelButton;
-	
-	
 
-	
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		// TODO Auto-generated method stub
@@ -112,7 +113,9 @@ public class RestaurantFragment extends Fragment implements
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		if (getArguments() != null) {
+			Log.i("args", getArguments().toString());
+		}
 		// get actionbar and set home button
 		final ActionBar actionBar = getActivity().getActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(true);
@@ -673,14 +676,25 @@ public class RestaurantFragment extends Fragment implements
 							// against backing out of app
 							if (getActivity() != null) {
 								getActivity().setResult(Activity.RESULT_OK);
-//								getActivity().finish();
-//								getFragmentManager().popBackStack();
-								RestaurantListFragment allRestaurants = new RestaurantListFragment();
-								
-								FragmentManager fragmentManager = getFragmentManager();
-								fragmentManager.beginTransaction()
-										.replace(R.id.content_frame, allRestaurants)
-										.commit();
+
+								if (getArguments() != null) {
+									String queryCode = getArguments()
+											.getString(
+													RestaurantListFragment.QUERY_CODE);
+									if (queryCode
+											.equals(NEW_RESTAURANT_FROM_HOME)) {
+										FragmentManager fm = getFragmentManager();
+										fm.popBackStack();
+										RestaurantListFragment allRestaurants = new RestaurantListFragment();
+										fm.beginTransaction()
+												.replace(R.id.content_frame,
+														allRestaurants)
+												.addToBackStack(null).commit();
+									} else {
+										removeFragment();
+									}
+								}
+
 							}
 						}
 
@@ -718,13 +732,26 @@ public class RestaurantFragment extends Fragment implements
 								mTakePictureButton.setEnabled(true);
 								if (getActivity() != null) {
 									getActivity().setResult(Activity.RESULT_OK);
-//									getActivity().finish();
-//									getFragmentManager().popBackStack();
-									RestaurantListFragment allRestaurants = new RestaurantListFragment();
-									FragmentManager fragmentManager = getFragmentManager();
-									fragmentManager.beginTransaction()
-											.replace(R.id.content_frame, allRestaurants)
-											.commit();
+
+									if (getArguments() != null) {
+										String queryCode = getArguments()
+												.getString(
+														RestaurantListFragment.QUERY_CODE);
+										if (queryCode
+												.equals(NEW_RESTAURANT_FROM_HOME)) {
+											FragmentManager fm = getFragmentManager();
+											fm.popBackStack();
+											RestaurantListFragment allRestaurants = new RestaurantListFragment();
+											fm.beginTransaction()
+													.replace(
+															R.id.content_frame,
+															allRestaurants)
+													.addToBackStack(null)
+													.commit();
+										} else {
+											removeFragment();
+										}
+									}
 								}
 							}
 
@@ -748,7 +775,19 @@ public class RestaurantFragment extends Fragment implements
 			break;
 
 		case R.id.cancelButton:
-			getActivity().finish();
+			RestaurantListFragment allRestaurants = new RestaurantListFragment();
+
+			if (getArguments() != null) {
+				String queryCode = getArguments().getString(
+						RestaurantListFragment.QUERY_CODE);
+				if (queryCode.equals(NEW_RESTAURANT_FROM_HOME)) {
+					FragmentManager fm = getFragmentManager();
+					fm.popBackStack();
+				}
+			}
+
+			removeFragment();
+
 			break;
 
 		case R.id.takePictureButton:
@@ -1217,6 +1256,14 @@ public class RestaurantFragment extends Fragment implements
 			return null;
 		}
 
+	}
+
+	public void removeFragment() {
+		FragmentManager fragmentManager = getFragmentManager();
+		if (fragmentManager.getBackStackEntryCount() > 1) {
+			fragmentManager.popBackStack();
+		}
+		fragmentManager.beginTransaction().remove(this).commit();
 	}
 
 	private boolean isExternalStorageAvailable() {

@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,6 +24,21 @@ public class MainActivityFragment extends Fragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setHasOptionsMenu(true);
+	}
+
+	@Override
+	public void onPrepareOptionsMenu(Menu menu) {
+		// TODO Auto-generated method stub
+		super.onPrepareOptionsMenu(menu);
+		menu.clear();
+		MenuInflater inflater = getActivity().getMenuInflater();
+		inflater.inflate(R.menu.home, menu);
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+			mSearchField.setText("");
 	}
 
 	@Override
@@ -49,14 +63,14 @@ public class MainActivityFragment extends Fragment {
 				myRestaurants.setArguments(args);
 				FragmentManager fragmentManager = getFragmentManager();
 				fragmentManager.beginTransaction()
-						.replace(R.id.content_frame, myRestaurants).commit();
+						.replace(R.id.content_frame, myRestaurants)
+						.addToBackStack(null).commit();
 
 			}
 		});
 
 		return v;
 	}
-	
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -68,11 +82,15 @@ public class MainActivityFragment extends Fragment {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		FragmentManager fragmentManager;
+		Bundle args = new Bundle();
 		switch (item.getItemId()) {
 		case R.id.menu_item_new_restaurant:
+			args.putString(RestaurantListFragment.QUERY_CODE,
+					RestaurantFragment.NEW_RESTAURANT_FROM_HOME);
 			RestaurantFragment restaurantFragment = new RestaurantFragment();
+			restaurantFragment.setArguments(args);
 			fragmentManager = getFragmentManager();
-			fragmentManager.popBackStack();
+
 			fragmentManager.beginTransaction()
 					.replace(R.id.content_frame, restaurantFragment)
 					.addToBackStack(null).commit();
@@ -83,25 +101,28 @@ public class MainActivityFragment extends Fragment {
 			navigateToLogin();
 			break;
 		case R.id.action_my_restaurants:
-			// TODO
-			Bundle args = new Bundle();
+			// attach code so next fragment knows how it was created
+
 			args.putString(RestaurantListFragment.QUERY_CODE,
 					RestaurantListFragment.MY_RESTAURATNS);
 			RestaurantListFragment myRestaurants = new RestaurantListFragment();
 			myRestaurants.setArguments(args);
 			fragmentManager = getFragmentManager();
-			fragmentManager.popBackStack();
 			fragmentManager.beginTransaction()
 					.replace(R.id.content_frame, myRestaurants)
 					.addToBackStack(null).commit();
 			break;
 		case R.id.action_all_restaurants:
+			// attach code so next fragment knows how it was created
+			args.putString(RestaurantListFragment.QUERY_CODE,
+					RestaurantListFragment.ALL_RESTAURATNS);
 			RestaurantListFragment allRestaurants = new RestaurantListFragment();
+			allRestaurants.setArguments(args);
 			fragmentManager = getFragmentManager();
-			fragmentManager.popBackStack();
 			fragmentManager.beginTransaction()
 					.replace(R.id.content_frame, allRestaurants)
 					.addToBackStack(null).commit();
+
 			break;
 		}
 		return super.onOptionsItemSelected(item);

@@ -76,6 +76,10 @@
         <string-array name="titles_array">
         <item>Home</item>
         <item>All Restaurants</item>
+        <item>My Restaurants</item>
+        <item>Added Today</item>
+        <item>Added This Week</item>
+        <item>Recently Updated</item>
 
     </string-array>
     <string name="drawer_open">Open navigation drawer</string>

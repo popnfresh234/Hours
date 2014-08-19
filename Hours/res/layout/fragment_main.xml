@@ -32,7 +32,8 @@
 
         <EditText
             android:id="@+id/searchField"
-            style="@style/AuthEditText" />
+            style="@style/AuthEditText" 
+            android:inputType="textNoSuggestions|textCapWords"/>
 
     </LinearLayout>
     <Button

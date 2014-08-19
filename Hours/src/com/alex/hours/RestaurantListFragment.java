@@ -1,6 +1,8 @@
 package com.alex.hours;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import android.app.Activity;
@@ -13,7 +15,6 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
@@ -46,10 +47,18 @@ import com.parse.ParseUser;
 public class RestaurantListFragment extends ListFragment {
 
 	private static final String ADMIN = "e7So6F4ytk";
-	public static final String QUERY_CODE = "querycode";
-	public static final String MY_RESTAURATNS = "my_restauratns";
+	public static final String QUERY_CODE = "query_code";
+	public static final String MY_RESTAURATNS = "my_restaurants";
+	public static final String ALL_RESTAURATNS = "all_restaurants";
+	public static final String RECENT_RESTAURANTS_ONE_DAY = "recent_restaurants_one_day";
+	public static final String RECENT_RESTAURANTS_ONE_WEEK = "recent_restaurants_one_week";
+	public static final String RECENT_UPDATE = "recent_update";
 	public static final String QUERY = "query";
+	public static final String DATE_INCREMENT = "date_increment";
 	public static final String SEARCH = "search";
+	public static final String CRITERIA = "criteria";
+	public static final String CRITERIA_CREATED_AT ="createdAt";
+	public static final String CRITERIA_UPDATED_AT="updatedAt";
 
 	private Button mAddRestaurantButton;
 	protected List<Restaurant> mRestaurants;
@@ -58,8 +67,60 @@ public class RestaurantListFragment extends ListFragment {
 	private String mCurrentUserId;
 
 	@Override
+	public void onPrepareOptionsMenu(Menu menu) {
+		// TODO Auto-generated method stub
+		super.onPrepareOptionsMenu(menu);
+		menu.clear();
+		MenuInflater inflater = getActivity().getMenuInflater();
+		inflater.inflate(R.menu.restaurant_list, menu);
+	}
+
+	@Override
 	public void onResume() {
+		// THIS ALL HAS TO BE HERE INSTEAD OF ONCREATEACTIVITY FOR SOME
+		// GODDAMNED REASON
+
 		super.onResume();
+
+	}
+
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onActivityCreated(savedInstanceState);
+		Log.i("WTF", "RestaurantListFragment created");
+
+	}
+
+	@Override
+	public void onViewCreated(View view, Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onViewCreated(view, savedInstanceState);
+
+	}
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		// Turn on action bar
+		this.setRetainInstance(true);
+		setHasOptionsMenu(true);
+		// Set parse analytics
+		ParseAnalytics.trackAppOpened(getActivity().getIntent());
+
+		// Check if user is logged in, if not then boot to login screen
+		ParseUser currentUser = ParseUser.getCurrentUser();
+		mCurrentUser = currentUser;
+		if (currentUser == null) {
+			navigateToLogin();
+
+		} else {
+			mCurrentUserId = ParseUser.getCurrentUser().getObjectId()
+					.toString();
+			Log.i("TAG", currentUser.getUsername());
+		}
+
+		Log.i("OnViewCreated", "called");
 		// check for network
 		ConnectivityManager check = (ConnectivityManager) getActivity()
 				.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -90,33 +151,21 @@ public class RestaurantListFragment extends ListFragment {
 			if (queryCode.equals(MY_RESTAURATNS)) {
 				queryParseForMyRestaurants();
 			}
+			if (queryCode.equals(ALL_RESTAURATNS)) {
+				queryParseAndSetAdapater();
+			}
 			if (queryCode.equals(SEARCH)) {
 				String query = getArguments().getString(QUERY);
-				Log.i("QUERY", query);
 				queryParseWithSearch(query);
 			}
+			if (queryCode.equals(RECENT_RESTAURANTS_ONE_DAY)||queryCode.equals(RECENT_RESTAURANTS_ONE_WEEK)||queryCode.equals(RECENT_UPDATE)) {
+				int dateIncrement = getArguments().getInt(DATE_INCREMENT);
+				String criteria = getArguments().getString(CRITERIA);
+				queryParseForRecent(dateIncrement, criteria);
+			}
 		}
-	}
-
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		// Turn on action bar
-		setHasOptionsMenu(true);
-		// Set parse analytics
-		ParseAnalytics.trackAppOpened(getActivity().getIntent());
-
-		// Check if user is logged in, if not then boot to login screen
-		ParseUser currentUser = ParseUser.getCurrentUser();
-		mCurrentUser = currentUser;
-		if (currentUser == null) {
-			navigateToLogin();
-
-		} else {
-			mCurrentUserId = ParseUser.getCurrentUser().getObjectId()
-					.toString();
-			Log.i("TAG", currentUser.getUsername());
-		}
+		FragmentManager fm = getFragmentManager();
+		Log.i("BackStack", "BackStack count: " + fm.getBackStackEntryCount());
 
 	}
 
@@ -211,6 +260,7 @@ public class RestaurantListFragment extends ListFragment {
 				}
 			}
 		}
+
 		return v;
 	}
 
@@ -302,19 +352,28 @@ public class RestaurantListFragment extends ListFragment {
 		return super.onOptionsItemSelected(item);
 	}
 
+	// TODO
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		Restaurant r = ((RestaurantAdapter) getListAdapter()).getItem(position);
 		Bundle args = new Bundle();
+		if (getArguments() != null) {
+			String queryCode = getArguments().getString(QUERY_CODE);
+			args.putString(QUERY_CODE, queryCode);
+
+		}
+
 		args.putString(RestaurantFragment.EXTRA_RESTAURANT_ID, r.getObjectId());
 		RestaurantFragment restaurantFragment = new RestaurantFragment();
 		restaurantFragment.setArguments(args);
 		FragmentManager fragmentManager = getFragmentManager();
-		fragmentManager.popBackStack();
+		if (fragmentManager.getBackStackEntryCount() > 1) {
+			fragmentManager.popBackStack();
+		}
 		fragmentManager.beginTransaction()
-				.replace(R.id.content_frame, restaurantFragment).addToBackStack(null).commit();
-		
-		
+				.replace(R.id.content_frame, restaurantFragment)
+				.addToBackStack(null).commit();
+
 		// Log.i("NAME", r.getTitle());
 		// Intent i = new Intent(getActivity(), RestaurantActivity.class);
 		// i.putExtra(RestaurantFragment.EXTRA_RESTAURANT_ID,
@@ -325,12 +384,17 @@ public class RestaurantListFragment extends ListFragment {
 	private void startRestaurantActivity() {
 		// Intent i = new Intent(getActivity(), RestaurantActivity.class);
 		// startActivityForResult(i, 0);
-		FragmentManager fm = getFragmentManager();
-		FragmentTransaction ft = fm.beginTransaction();
-		RestaurantFragment raf = new RestaurantFragment();
-		ft.replace(R.id.content_frame, raf);
-
-		ft.commit();
+		Bundle args = new Bundle();
+		args.putString(QUERY_CODE, RestaurantFragment.NEW_RESTAURANT_FROM_LIST);
+		RestaurantFragment restaurantFragment = new RestaurantFragment();
+		restaurantFragment.setArguments(args);
+		FragmentManager fragmentManager = getFragmentManager();
+		if (fragmentManager.getBackStackEntryCount() > 1) {
+			fragmentManager.popBackStack();
+		}
+		fragmentManager.beginTransaction()
+				.replace(R.id.content_frame, restaurantFragment)
+				.addToBackStack(null).commit();
 	}
 
 	// Send user back to login screen
@@ -481,6 +545,70 @@ public class RestaurantListFragment extends ListFragment {
 					"Restaurant");
 			query.whereEqualTo(ParseConstants.KEY_AUTHOR,
 					ParseUser.getCurrentUser());
+			query.addAscendingOrder(ParseConstants.KEY_RESTAURANT_LOWERCASE_TITLE);
+			query.findInBackground(new FindCallback<Restaurant>() {
+				@Override
+				public void done(List<Restaurant> restaurants, ParseException e) {
+					if (getActivity() != null) {
+						getActivity().setProgressBarIndeterminateVisibility(
+								false);
+					}
+					// Turn off swipe refresh indicator
+					if (mSwipeRefreshLayout.isRefreshing()) {
+						mSwipeRefreshLayout.setRefreshing(false);
+					}
+
+					if (e == null) {
+						// We found restaurants!
+						mRestaurants = restaurants;
+
+						String[] titles = new String[mRestaurants.size()];
+						int i = 0;
+						for (Restaurant restaurant : mRestaurants) {
+							titles[i] = restaurant
+									.getString(ParseConstants.KEY_RESTAURANT_TITLE);
+							i++;
+						}
+						if (getActivity() != null) {
+							if (getListView().getAdapter() == null) {
+								RestaurantAdapter adapter = new RestaurantAdapter(
+										getListView().getContext(),
+										mRestaurants);
+								setListAdapter(adapter);
+							} else {
+								// refill the adapter!
+								((RestaurantAdapter) getListView().getAdapter())
+										.refill(mRestaurants);
+							}
+						}
+					} else {
+						AlertDialog.Builder builder = new AlertDialog.Builder(
+								getActivity());
+						builder.setMessage(e.getMessage())
+								.setTitle(R.string.general_error_title)
+								.setPositiveButton(android.R.string.ok, null);
+						AlertDialog dialog = builder.create();
+						dialog.show();
+					}
+				}
+
+			});
+		}
+	}
+
+	private void queryParseForRecent(int dateIncrement, String criteria) {
+		if (ParseUser.getCurrentUser() != null) {
+			
+			Calendar calendar = Calendar.getInstance();
+			calendar.add(Calendar.DAY_OF_YEAR, dateIncrement);
+			Date newDate = calendar.getTime();
+			Log.i("DATE", newDate.toString());
+			
+			// Query parse for data, store in array
+			getActivity().setProgressBarIndeterminateVisibility(true);
+			ParseQuery<Restaurant> query = new ParseQuery<Restaurant>(
+					"Restaurant");
+			query.whereGreaterThan(criteria, newDate);
 			query.addAscendingOrder(ParseConstants.KEY_RESTAURANT_LOWERCASE_TITLE);
 			query.findInBackground(new FindCallback<Restaurant>() {
 				@Override

@@ -31,8 +31,6 @@ public class MainActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		getWindow().requestFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.activity_main);
-		
-		
 
 		mTitle = mDrawerTitle = getTitle();
 		mTitles = getResources().getStringArray(R.array.titles_array);
@@ -79,15 +77,13 @@ public class MainActivity extends FragmentActivity {
 		}
 	}
 
-
-
 	/* Called whenever we call invalidateOptionsMenu() */
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		// If the nav drawer is open, hide action items related to the content
 		// view
-//		boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
-		
+		// boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
+
 		return super.onPrepareOptionsMenu(menu);
 	}
 
@@ -100,8 +96,8 @@ public class MainActivity extends FragmentActivity {
 		}
 		// Handle action buttons
 
-			return super.onOptionsItemSelected(item);
-	
+		return super.onOptionsItemSelected(item);
+
 	}
 
 	/* The click listner for ListView in the navigation drawer */
@@ -117,6 +113,7 @@ public class MainActivity extends FragmentActivity {
 	private void selectItem(int position) {
 		// update the main content by replacing fragments
 		FragmentManager fragmentManager;
+		Bundle args = new Bundle();
 		Log.i("POSITION", "position: " + position);
 		switch (position) {
 		case 0:
@@ -124,22 +121,83 @@ public class MainActivity extends FragmentActivity {
 			fragmentManager = getSupportFragmentManager();
 			fragmentManager.popBackStack();
 			fragmentManager.beginTransaction()
-					.replace(R.id.content_frame, mainActivity)
-					.commit();
+					.replace(R.id.content_frame, mainActivity).commit();
 			break;
 		case 1:
+
+			args.putString(RestaurantListFragment.QUERY_CODE,
+					RestaurantListFragment.ALL_RESTAURATNS);
 			RestaurantListFragment allRestaurants = new RestaurantListFragment();
+			allRestaurants.setArguments(args);
 			fragmentManager = getSupportFragmentManager();
 			fragmentManager.popBackStack();
 			fragmentManager.beginTransaction()
-					.add(R.id.content_frame, allRestaurants)
+					.replace(R.id.content_frame, allRestaurants)
+					.addToBackStack(null).commit();
+			break;
+		case 2:
+
+			args.putString(RestaurantListFragment.QUERY_CODE,
+					RestaurantListFragment.MY_RESTAURATNS);
+			RestaurantListFragment myRestaurants = new RestaurantListFragment();
+			myRestaurants.setArguments(args);
+			fragmentManager = getSupportFragmentManager();
+			fragmentManager.popBackStack();
+			fragmentManager.beginTransaction()
+					.replace(R.id.content_frame, myRestaurants)
+					.addToBackStack(null).commit();
+			break;
+			
+		case 3:
+
+			args.putString(RestaurantListFragment.QUERY_CODE,
+					RestaurantListFragment.RECENT_RESTAURANTS_ONE_DAY);
+			args.putInt(RestaurantListFragment.DATE_INCREMENT, -1);
+			args.putString(RestaurantListFragment.CRITERIA, RestaurantListFragment.CRITERIA_CREATED_AT);
+			RestaurantListFragment recentRestaurantsOneDay = new RestaurantListFragment();
+			recentRestaurantsOneDay.setArguments(args);
+			fragmentManager = getSupportFragmentManager();
+			fragmentManager.popBackStack();
+			fragmentManager.beginTransaction()
+					.replace(R.id.content_frame, recentRestaurantsOneDay)
+					.addToBackStack(null).commit();
+			break;
+			
+		case 4:
+
+			args.putString(RestaurantListFragment.QUERY_CODE,
+					RestaurantListFragment.RECENT_RESTAURANTS_ONE_WEEK);
+			args.putInt(RestaurantListFragment.DATE_INCREMENT, -7);
+			args.putString(RestaurantListFragment.CRITERIA, RestaurantListFragment.CRITERIA_CREATED_AT);
+			RestaurantListFragment recentRestaurantsOneWeek = new RestaurantListFragment();
+			recentRestaurantsOneWeek.setArguments(args);
+			fragmentManager = getSupportFragmentManager();
+			fragmentManager.popBackStack();
+			fragmentManager.beginTransaction()
+					.replace(R.id.content_frame, recentRestaurantsOneWeek)
+					.addToBackStack(null).commit();
+			break;
+			
+		case 5:
+
+			args.putString(RestaurantListFragment.QUERY_CODE,
+					RestaurantListFragment.RECENT_UPDATE);
+			args.putInt(RestaurantListFragment.DATE_INCREMENT, -1);
+			args.putString(RestaurantListFragment.CRITERIA, RestaurantListFragment.CRITERIA_UPDATED_AT);
+			RestaurantListFragment recentUpdate = new RestaurantListFragment();
+			recentUpdate.setArguments(args);
+			fragmentManager = getSupportFragmentManager();
+			fragmentManager.popBackStack();
+			fragmentManager.beginTransaction()
+					.replace(R.id.content_frame, recentUpdate)
 					.addToBackStack(null).commit();
 			break;
 		}
+		
 
 		// update selected item and title, then close the drawer
 		mDrawerList.setItemChecked(position, false);
-//		setTitle(mPlanetTitles[position]);
+		// setTitle(mPlanetTitles[position]);
 		mDrawerLayout.closeDrawer(mDrawerList);
 	}
 
@@ -167,8 +225,5 @@ public class MainActivity extends FragmentActivity {
 		// Pass any configuration change to the drawer toggls
 		mDrawerToggle.onConfigurationChanged(newConfig);
 	}
-
-
-
 
 }
