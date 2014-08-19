@@ -13,8 +13,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import com.alex.hours.utilities.DrawerItemCustomAdapter;
+import com.alex.hours.utilities.ObjectDrawerItem;
 
 public class MainActivity extends FragmentActivity {
 
@@ -24,16 +26,27 @@ public class MainActivity extends FragmentActivity {
 
 	private CharSequence mDrawerTitle;
 	private CharSequence mTitle;
-	private String[] mTitles;
+	//private String[] mTitles;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		getWindow().requestFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.activity_main);
+		
+		//Create drawer items for the custom adapter
+		ObjectDrawerItem[] drawerItem = new ObjectDrawerItem[6];
+		 
+		drawerItem[0] = new ObjectDrawerItem(R.drawable.ic_av_home, "Home");
+		drawerItem[1] = new ObjectDrawerItem(R.drawable.ic_all, "All Restaurants");
+		drawerItem[2] = new ObjectDrawerItem(R.drawable.ic_my_restaurants, "My Restaurants");
+		drawerItem[3] = new ObjectDrawerItem(R.drawable.ic_added_today, "Added Today");
+		drawerItem[4] = new ObjectDrawerItem(R.drawable.ic_added_week, "Added This Week");
+		drawerItem[5] = new ObjectDrawerItem(R.drawable.ic_updated, "Recently Updates");
+		
 
-		mTitle = mDrawerTitle = getTitle();
-		mTitles = getResources().getStringArray(R.array.titles_array);
+		//mTitle = mDrawerTitle = getTitle();
+		//mTitles = getResources().getStringArray(R.array.titles_array);
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
@@ -42,8 +55,11 @@ public class MainActivity extends FragmentActivity {
 		mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow,
 				GravityCompat.START);
 		// set up the drawer's list view with items and click listener
-		mDrawerList.setAdapter(new ArrayAdapter<String>(this,
-				R.layout.drawer_list_item, mTitles));
+//		mDrawerList.setAdapter(new ArrayAdapter<String>(this,
+//				R.layout.drawer_list_item, mTitles));
+		//Set custom adapter instead of standard adapter for icons
+		DrawerItemCustomAdapter adapter = new DrawerItemCustomAdapter(this, R.layout.list_item_drawer, drawerItem);
+		mDrawerList.setAdapter(adapter);
 		mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
 		// enable ActionBar app icon to behave as action to toggle nav drawer
@@ -54,7 +70,7 @@ public class MainActivity extends FragmentActivity {
 		// between the sliding drawer and the action bar app icon
 		mDrawerToggle = new ActionBarDrawerToggle(this, /* host Activity */
 		mDrawerLayout, /* DrawerLayout object */
-		R.drawable.ic_drawer, /* nav drawer image to replace 'Up' caret */
+		R.drawable.ic_navigation_drawer, /* nav drawer image to replace 'Up' caret */
 		R.string.drawer_open, /* "open drawer" description for accessibility */
 		R.string.drawer_close /* "close drawer" description for accessibility */
 		) {
@@ -225,5 +241,5 @@ public class MainActivity extends FragmentActivity {
 		// Pass any configuration change to the drawer toggls
 		mDrawerToggle.onConfigurationChanged(newConfig);
 	}
-
+	
 }

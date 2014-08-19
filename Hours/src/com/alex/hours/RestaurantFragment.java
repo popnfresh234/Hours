@@ -775,8 +775,6 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 			break;
 
 		case R.id.cancelButton:
-			RestaurantListFragment allRestaurants = new RestaurantListFragment();
-
 			if (getArguments() != null) {
 				String queryCode = getArguments().getString(
 						RestaurantListFragment.QUERY_CODE);
