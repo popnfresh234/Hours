@@ -8,13 +8,13 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ListView;
-
 import com.alex.hours.utilities.DrawerItemCustomAdapter;
 import com.alex.hours.utilities.ObjectDrawerItem;
 
@@ -37,12 +37,12 @@ public class MainActivity extends FragmentActivity {
 		//Create drawer items for the custom adapter
 		ObjectDrawerItem[] drawerItem = new ObjectDrawerItem[6];
 		 
-		drawerItem[0] = new ObjectDrawerItem(R.drawable.ic_av_home, "Home");
-		drawerItem[1] = new ObjectDrawerItem(R.drawable.ic_all, "All Restaurants");
-		drawerItem[2] = new ObjectDrawerItem(R.drawable.ic_my_restaurants, "My Restaurants");
-		drawerItem[3] = new ObjectDrawerItem(R.drawable.ic_added_today, "Added Today");
-		drawerItem[4] = new ObjectDrawerItem(R.drawable.ic_added_week, "Added This Week");
-		drawerItem[5] = new ObjectDrawerItem(R.drawable.ic_updated, "Recently Updates");
+		drawerItem[0] = new ObjectDrawerItem(R.drawable.ic_av_home, getString(R.string.nav_drawer_home));
+		drawerItem[1] = new ObjectDrawerItem(R.drawable.ic_all, getString(R.string.nav_drawer_all_restaurants));
+		drawerItem[2] = new ObjectDrawerItem(R.drawable.ic_my_restaurants, getString(R.string.nav_drawer_my_restaurants));
+		drawerItem[3] = new ObjectDrawerItem(R.drawable.ic_added_today, getString(R.string.nav_drawer_added_today));
+		drawerItem[4] = new ObjectDrawerItem(R.drawable.ic_added_week, getString(R.string.nav_drawer_added_this_week));
+		drawerItem[5] = new ObjectDrawerItem(R.drawable.ic_updated, getString(R.string.nav_drawer_recently_updated));
 		
 
 		//mTitle = mDrawerTitle = getTitle();
@@ -240,6 +240,17 @@ public class MainActivity extends FragmentActivity {
 		super.onConfigurationChanged(newConfig);
 		// Pass any configuration change to the drawer toggls
 		mDrawerToggle.onConfigurationChanged(newConfig);
+	}
+	
+	@Override
+	public void onBackPressed() {
+	    // TODO Auto-generated method stub
+
+	    if(mDrawerLayout.isDrawerOpen(Gravity.LEFT)){
+	        mDrawerLayout.closeDrawer(Gravity.LEFT);
+	    }else{
+	        super.onBackPressed();
+	    }
 	}
 	
 }

@@ -247,6 +247,8 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 		mCancelButton = (Button) v.findViewById(R.id.cancelButton);
 		mCancelButton.setOnClickListener(this);
 
+		// Method includes check to see if we're editing a restaurant or
+		// creating a new one, only loads fields if we're editing
 		loadRestaurant();
 		return v;
 
@@ -257,8 +259,9 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-
+		//If user pressed OK from either take or chooe photo request
 		if (resultCode == getActivity().RESULT_OK) {
+			//If choosing a photo, get it's URI from the data
 			if (requestCode == PICK_PHOTO_REQUEST) {
 				if (data == null) {
 					Log.i("DATA", "DATA ERROR");
@@ -266,6 +269,7 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 					mMediaUri = data.getData();
 				}
 			}
+			//If taking a photo,do something funky with media scanner
 			if (requestCode == TAKE_PHOTO_REQUEST) {
 				Intent mediaScanIntent = new Intent(
 						Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
@@ -282,7 +286,7 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 	}
 
 	protected void resizeImageForUpload() {
-
+		Log.i("RESIZE", "resize");
 		byte[] fileBytes = FileHelper.getByteArrayFromFile(getActivity(),
 				mMediaUri);
 
@@ -295,9 +299,12 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 			String fileName = FileHelper.getFileName(getActivity(), mMediaUri,
 					mFileType);
 			ParseFile file = new ParseFile(fileName, fileBytes);
+
+			// If the restaurant already exists, replace it's image with the new
+			// one
+
 			if (mRestaurant != null) {
 				mRestaurant.setImage(file);
-
 				getActivity().setProgressBarIndeterminateVisibility(true);
 				mSaveButton.setEnabled(false);
 				mCancelButton.setEnabled(false);
@@ -308,7 +315,6 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 					@Override
 					public void done(ParseException e) {
 						if (e == null) {
-
 							mSaveButton.setEnabled(true);
 							mCancelButton.setEnabled(true);
 							mTakePictureButton.setEnabled(true);
@@ -319,14 +325,24 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 					}
 				});
 			} else {
+
+				// If the restaurant doesn't exist, create a new one and set
+				// upload the chosen or taken image
+
 				mRestaurant = createRestaurant();
 				mRestaurant.setImage(file);
 				getActivity().setProgressBarIndeterminateVisibility(true);
+				mSaveButton.setEnabled(false);
+				mCancelButton.setEnabled(false);
+				mTakePictureButton.setEnabled(false);
 				mRestaurant.saveInBackground(new SaveCallback() {
 
 					@Override
 					public void done(ParseException e) {
 						if (e == null) {
+							mSaveButton.setEnabled(true);
+							mCancelButton.setEnabled(true);
+							mTakePictureButton.setEnabled(true);
 							loadFields();
 						} else {
 							AlertDialog.Builder builder = new AlertDialog.Builder(
@@ -344,6 +360,7 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 		}
 	}
 
+	//Handle clicks on the various buttons in the fragment
 	public void onClick(View v) {
 		int id = v.getId();
 		switch (id) {
@@ -655,6 +672,8 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 			mSaveButton.setEnabled(false);
 			mCancelButton.setEnabled(false);
 			mTakePictureButton.setEnabled(false);
+
+			// If mRestaurant == null we're creating a new restaurant
 			if (mRestaurant == null) {
 				mRestaurant = createRestaurant();
 				getActivity().setProgressBarIndeterminateVisibility(true);
@@ -677,10 +696,16 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 							if (getActivity() != null) {
 								getActivity().setResult(Activity.RESULT_OK);
 
+								// Check if a query code was passed in, and and
+								// if so what it was
 								if (getArguments() != null) {
 									String queryCode = getArguments()
 											.getString(
 													RestaurantListFragment.QUERY_CODE);
+
+									// If the request came from the home
+									// fragment, pop the backstack and create
+									// all restaurant view fragment
 									if (queryCode
 											.equals(NEW_RESTAURANT_FROM_HOME)) {
 										FragmentManager fm = getFragmentManager();
@@ -691,6 +716,11 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 														allRestaurants)
 												.addToBackStack(null).commit();
 									} else {
+										// If the request didn't come from the
+										// homepage, it came from restaurant
+										// list activity
+										// remove current fragment to return to
+										// list
 										removeFragment();
 									}
 								}
@@ -700,7 +730,9 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 
 					}
 				});
-			} else {
+			}
+			// If mRestaurant is not null, then we're updating an old listing
+			else {
 
 				// When saving check if current user is author and therefore has
 				// write access, or is one of the listed administrators
@@ -732,11 +764,15 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 								mTakePictureButton.setEnabled(true);
 								if (getActivity() != null) {
 									getActivity().setResult(Activity.RESULT_OK);
-
+									// Check if a query code was passed in, and
+									// what it was
 									if (getArguments() != null) {
 										String queryCode = getArguments()
 												.getString(
 														RestaurantListFragment.QUERY_CODE);
+										// If the query came from home, pop
+										// backstack and create restaurant list
+										// fragment
 										if (queryCode
 												.equals(NEW_RESTAURANT_FROM_HOME)) {
 											FragmentManager fm = getFragmentManager();
@@ -748,7 +784,10 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 															allRestaurants)
 													.addToBackStack(null)
 													.commit();
-										} else {
+										}
+										// Otherwise we came from a listview,
+										// remove fragment to return to it
+										else {
 											removeFragment();
 										}
 									}
@@ -758,7 +797,11 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 						}
 					});
 
-				} else {
+				}
+
+				// If the user doesn't have write permission, display alert
+				// error
+				else {
 
 					mCancelButton.setEnabled(true);
 					// TODO display alert
@@ -778,17 +821,21 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 			if (getArguments() != null) {
 				String queryCode = getArguments().getString(
 						RestaurantListFragment.QUERY_CODE);
+				// If we came from home, pop the backstack to return to the
+				// homepage
 				if (queryCode.equals(NEW_RESTAURANT_FROM_HOME)) {
 					FragmentManager fm = getFragmentManager();
 					fm.popBackStack();
 				}
 			}
-
+			// Otherwise we came from a listview, remove fragment to return
 			removeFragment();
 
 			break;
 
 		case R.id.takePictureButton:
+			// Create a dialog to choose whether to take a picture or choose one
+			// from the gallery
 			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 			builder.setItems(R.array.camera_choices, mDialogListener);
 			AlertDialog dialog_camera = builder.create();
@@ -800,6 +847,7 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 
 	}
 
+	// Listeners will wipe the button text if they are unchecked
 	@Override
 	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 		int id = buttonView.getId();
@@ -857,6 +905,7 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 	}
 
 	// FocusChangeListeners
+	// These add the pencil edit icon when edit text has focus
 	@Override
 	public void onFocusChange(View v, boolean hasFocus) {
 		int id = v.getId();
@@ -892,6 +941,8 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 	}
 
 	// Method for creating new restaurant
+	// Restaurant object is created with information from the restaurant
+	// fragment fields
 
 	private Restaurant createRestaurant() {
 		Restaurant restaurant = new Restaurant();
@@ -949,7 +1000,7 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 		return restaurant;
 	}
 
-	// Methods for editing restaurant
+	// Loads data from restaurant object into restaurant fragment fields
 
 	private void loadFields() {
 
@@ -994,6 +1045,7 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 		mNotesField.setText(mRestaurant.getNotes());
 		mNotesField.clearFocus();
 
+		// If an image file exists add it to the restaurant fragment
 		ParseFile file = mRestaurant.getImage();
 		if (file != null) {
 			Uri fileUri = Uri.parse(file.getUrl());
@@ -1019,6 +1071,8 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 			}
 		}
 	}
+
+	// Update a restaurant object with data from restaurant fragment
 
 	private void updateFields() {
 		mRestaurant.setTitle(mTitleField.getText().toString());
@@ -1075,39 +1129,45 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 		mRestaurant.setNotes(mNotesField.getText().toString());
 	}
 
-	protected void save(Restaurant restaurant) {
-		restaurant.saveInBackground(new SaveCallback() {
-			@Override
-			public void done(ParseException e) {
-				if (e == null) {
+	//
+	// protected void save(Restaurant restaurant) {
+	// restaurant.saveInBackground(new SaveCallback() {
+	// @Override
+	// public void done(ParseException e) {
+	// if (e == null) {
+	//
+	// // success!
+	// // Toast.makeText(getActivity(), R.string.success_message,
+	// // Toast.LENGTH_LONG).show();
+	// } else {
+	// AlertDialog.Builder builder = new AlertDialog.Builder(
+	// getActivity());
+	// builder.setMessage(R.string.error_saving)
+	// .setTitle(R.string.error_saving_title)
+	// .setPositiveButton(android.R.string.ok, null);
+	// AlertDialog dialog = builder.create();
+	// dialog.show();
+	// }
+	// }
+	// });
+	// }
 
-					// success!
-					// Toast.makeText(getActivity(), R.string.success_message,
-					// Toast.LENGTH_LONG).show();
-				} else {
-					AlertDialog.Builder builder = new AlertDialog.Builder(
-							getActivity());
-					builder.setMessage(R.string.error_saving)
-							.setTitle(R.string.error_saving_title)
-							.setPositiveButton(android.R.string.ok, null);
-					AlertDialog dialog = builder.create();
-					dialog.show();
-				}
-			}
-		});
-	}
-
+	// Query parse for restaurant based on ID passed in from listview
 	private void loadRestaurant() {
+		// if an argument is passed in and is a restaurant ID, get it and store
+		// it
 		if (getArguments() != null) {
 			if (getArguments().getString(EXTRA_RESTAURANT_ID) != null) {
 				String restaurantId = (String) getArguments().getString(
 						EXTRA_RESTAURANT_ID);
-				// Log.i("ID", restaurantId);
 				// Fetch restaurant based on ID
+				// Disable buttons so user can't save or take a picture in the
+				// middle of fetching the restaurant
 				mSaveButton.setEnabled(false);
 				mCancelButton.setEnabled(false);
 				mTakePictureButton.setEnabled(false);
 				getActivity().setProgressBarIndeterminateVisibility(true);
+				// query parse for the restaurant based on the ID passed in
 				ParseQuery<Restaurant> query = ParseQuery
 						.getQuery("Restaurant");
 				query.getInBackground(restaurantId,
@@ -1115,7 +1175,7 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 							public void done(Restaurant restaurant,
 									ParseException e) {
 								if (e == null) {
-
+									// Re-enable buttons
 									mRestaurant = restaurant;
 									mSaveButton.setEnabled(true);
 									mCancelButton.setEnabled(true);
@@ -1132,9 +1192,9 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 															false);
 										}
 									}
-									// Check if current user is author, display
-									// edit warning
+									// Check if current user is author or admin,
 									// if not, disable save and picture button
+									// and display warning
 									String currentUser = ParseUser
 											.getCurrentUser().getObjectId()
 											.toString();
@@ -1154,6 +1214,7 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 										mTakePictureButton.setEnabled(false);
 										// }
 									}
+									// set fields to restaurant object data
 									loadFields();
 								} else {
 									AlertDialog.Builder builder = new AlertDialog.Builder(
@@ -1173,6 +1234,8 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 		}
 	}
 
+	// Adds proper padding and spacing to time for time buttons, adds 0 if less
+	// hour is less than 10
 	private static String padding_str(int c) {
 		if (c >= 10)
 			return String.valueOf(c);
@@ -1180,6 +1243,7 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 			return "0" + String.valueOf(c);
 	}
 
+	// Handle clicks to the dialog for choosing or taking pictures
 	protected DialogInterface.OnClickListener mDialogListener = new DialogInterface.OnClickListener() {
 		@Override
 		public void onClick(DialogInterface dialog, int which) {
@@ -1256,6 +1320,7 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 
 	}
 
+	// Removes current fragment, pops backstack if unwanted fragments are added
 	public void removeFragment() {
 		FragmentManager fragmentManager = getFragmentManager();
 		if (fragmentManager.getBackStackEntryCount() > 1) {
@@ -1271,15 +1336,5 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 		} else {
 			return false;
 		}
-	}
-
-	public static RestaurantFragment newInstance(String restaurantId) {
-		Bundle args = new Bundle();
-		args.putString(EXTRA_RESTAURANT_ID, restaurantId);
-
-		RestaurantFragment fragment = new RestaurantFragment();
-		fragment.setArguments(args);
-
-		return fragment;
 	}
 }

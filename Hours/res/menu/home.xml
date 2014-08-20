@@ -7,7 +7,7 @@
         android:showAsAction="always"
         android:title="@string/new_restaurant"/>
 
-    <item
+   <!--   <item
         android:id="@+id/action_my_restaurants"
         android:title="@string/menu_my_restaurants_label">
     </item>
@@ -15,6 +15,8 @@
         android:id="@+id/action_all_restaurants"
         android:title="@string/menu_all_restaurants_label">
     </item>
+    
+    -->
     <item
         android:id="@+id/action_logout"
         android:title="@string/menu_logout_label">
