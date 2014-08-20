@@ -46,24 +46,24 @@ import com.parse.ParseUser;
 public class RestaurantListFragment extends ListFragment {
 
 	private static final String ADMIN = "e7So6F4ytk";
-	
-	//Query codes for arguments for identifying how fragment was created
+
+	// Query codes for arguments for identifying how fragment was created
 	public static final String QUERY_CODE = "query_code";
 	public static final String MY_RESTAURATNS = "my_restaurants";
 	public static final String ALL_RESTAURATNS = "all_restaurants";
 	public static final String RECENT_RESTAURANTS_ONE_DAY = "recent_restaurants_one_day";
 	public static final String RECENT_RESTAURANTS_ONE_WEEK = "recent_restaurants_one_week";
 	public static final String RECENT_UPDATE = "recent_update";
-	
-	//Codes for data passed in and out from fragment
+
+	// Codes for data passed in and out from fragment
 	public static final String QUERY = "query";
 	public static final String DATE_INCREMENT = "date_increment";
 	public static final String SEARCH = "search";
 	public static final String CRITERIA = "criteria";
 	public static final String CRITERIA_CREATED_AT = "createdAt";
 	public static final String CRITERIA_UPDATED_AT = "updatedAt";
-	
-	//Query codes for querying parse
+
+	// Query codes for querying parse
 	private static final int ALL_RESTAURANT_QUERY_CODE = 0;
 	private static final int MY_RESTAURANT_QUERY_CODE = 1;
 	private static final int SEARCH_QUERY_CODE = 2;
@@ -82,21 +82,24 @@ public class RestaurantListFragment extends ListFragment {
 		super.onPause();
 		getActivity().setProgressBarIndeterminateVisibility(false);
 	}
-	
+
 	@Override
 	public void onResume() {
 		// Update list after coming back from creating new restaurant
 		super.onResume();
 		if (getArguments() != null
-				&& getArguments().getString(QUERY_CODE).equals(
-						MY_RESTAURATNS)) {
-			mQueryCode = MY_RESTAURANT_QUERY_CODE;
-			getActivity().setProgressBarIndeterminateVisibility(true);
-			queryParse(1, null, null);
-		} else {
-			mQueryCode = ALL_RESTAURANT_QUERY_CODE;
-			getActivity().setProgressBarIndeterminateVisibility(true);
-			queryParse(1, null, null);
+				&& !getArguments().getString(QUERY_CODE).equals(SEARCH)) {
+			if (getArguments() != null
+					&& getArguments().getString(QUERY_CODE).equals(
+							MY_RESTAURATNS)) {
+				mQueryCode = MY_RESTAURANT_QUERY_CODE;
+				getActivity().setProgressBarIndeterminateVisibility(true);
+				queryParse(1, null, null);
+			} else {
+				mQueryCode = ALL_RESTAURANT_QUERY_CODE;
+				getActivity().setProgressBarIndeterminateVisibility(true);
+				queryParse(1, null, null);
+			}
 		}
 	}
 
@@ -180,10 +183,9 @@ public class RestaurantListFragment extends ListFragment {
 		} else {
 			mCurrentUserId = ParseUser.getCurrentUser().getObjectId()
 					.toString();
-			
+
 		}
 
-		
 		// check for network
 		ConnectivityManager check = (ConnectivityManager) getActivity()
 				.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -202,7 +204,7 @@ public class RestaurantListFragment extends ListFragment {
 			dialog.show();
 
 		}
-		//turn on progress indicator when fragment is created
+		// turn on progress indicator when fragment is created
 		getActivity().setProgressBarIndeterminateVisibility(true);
 		// If no argument is passed, show all restaurants
 		if (getArguments() == null) {
@@ -362,16 +364,16 @@ public class RestaurantListFragment extends ListFragment {
 			ParseUser.logOut();
 			navigateToLogin();
 			break;
-//		case R.id.action_my_restaurants:
-//			getActivity().setProgressBarIndeterminateVisibility(true);		
-//			mQueryCode = MY_RESTAURANT_QUERY_CODE;
-//			queryParse(1, null, null);
-//			break;
-//		case R.id.action_all_restaurants:
-//			getActivity().setProgressBarIndeterminateVisibility(true);		
-//			mQueryCode = ALL_RESTAURANT_QUERY_CODE;
-//			queryParse(1, null, null);
-//			break;
+		// case R.id.action_my_restaurants:
+		// getActivity().setProgressBarIndeterminateVisibility(true);
+		// mQueryCode = MY_RESTAURANT_QUERY_CODE;
+		// queryParse(1, null, null);
+		// break;
+		// case R.id.action_all_restaurants:
+		// getActivity().setProgressBarIndeterminateVisibility(true);
+		// mQueryCode = ALL_RESTAURANT_QUERY_CODE;
+		// queryParse(1, null, null);
+		// break;
 		case R.id.menu_item_new_restaurant:
 			startRestaurantActivity();
 			break;
@@ -401,7 +403,6 @@ public class RestaurantListFragment extends ListFragment {
 				.replace(R.id.content_frame, restaurantFragment)
 				.addToBackStack(null).commit();
 	}
-	
 
 	private void queryParse(int dateIncrement, String criteria, String search) {
 		// create query
@@ -414,7 +415,6 @@ public class RestaurantListFragment extends ListFragment {
 				Calendar calendar = Calendar.getInstance();
 				calendar.add(Calendar.DAY_OF_YEAR, dateIncrement);
 				Date newDate = calendar.getTime();
-
 
 				// Query parse for data, store in array
 
@@ -437,7 +437,7 @@ public class RestaurantListFragment extends ListFragment {
 
 			// query for search
 			if (mQueryCode == SEARCH_QUERY_CODE) {
-				
+
 				ParseQuery<Restaurant> queryTitle = new ParseQuery<Restaurant>(
 						"Restaurant");
 				queryTitle.whereContains(

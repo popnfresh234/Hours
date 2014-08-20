@@ -9,7 +9,6 @@
     <string name="content_desc_background_image">Background Image</string>
     <string name="content_desc_button_divider">Button Divider</string>
     <string name="content_desc_restaurant_image">Restaurant Image</string>
-    <string name="delete_restaurant">Delete</string>
     <string name="drawer_close">Close navigation drawer</string>
     <string name="drawer_open">Open navigation drawer</string>
     <string name="edit_error_message">Only the original poster may edit this listing</string>
@@ -67,10 +66,7 @@
     <string name="thursday_check_label">Thursday</string>
     <string name="thursday_short">T</string>
     <string name="title_activity_login">Login</string>
-    <string name="title_activity_main_activity">Welcome to Hours!</string>
-    <string name="title_activity_restaurant">Restaurant</string>
     <string name="title_activity_sign_up">Sign Up Activity</string>
-    <string name="title_activity_view_image">Restaurant Image</string>
     <string name="tuesday_check_label">Tuesday</string>
     <string name="tuesday_short">T</string>
     <string name="username_hint">Username</string>

@@ -75,10 +75,7 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
-    <style name="ActionBar.Transparent.Hours" parent="@android:style/Widget.Holo.ActionBar">
-        <item name="android:background">@drawable/ab_transparent_hours</item>
-        <item name="android:progressBarStyle">@style/ProgressBar.Hours</item>
-    </style>
+
 
     <style name="PopupMenu.Hours" parent="@android:style/Widget.Holo.ListPopupWindow">
         <item name="android:popupBackground">@drawable/menu_dropdown_panel_hours</item>

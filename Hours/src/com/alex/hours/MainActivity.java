@@ -1,6 +1,7 @@
 package com.alex.hours;
 
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentActivity;
@@ -12,9 +13,12 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.ListView;
+
 import com.alex.hours.utilities.DrawerItemCustomAdapter;
 import com.alex.hours.utilities.ObjectDrawerItem;
 
@@ -23,30 +27,54 @@ public class MainActivity extends FragmentActivity {
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerList;
 	private ActionBarDrawerToggle mDrawerToggle;
+	private boolean mIsDrawerLocked = false;
 
 	private CharSequence mDrawerTitle;
 	private CharSequence mTitle;
-	//private String[] mTitles;
+
+	// private String[] mTitles;
+
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		FrameLayout frameLayout = (FrameLayout) findViewById(R.id.content_frame);
+		if (((ViewGroup.MarginLayoutParams) frameLayout.getLayoutParams()).leftMargin == (int) getResources()
+				.getDimension(R.dimen.drawer_size)) {
+			Log.i("LOCK", "LOCK");
+			mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_OPEN,
+					mDrawerList);
+			mDrawerLayout.setScrimColor(Color.TRANSPARENT);
+			mIsDrawerLocked = true;
+			getActionBar().setDisplayHomeAsUpEnabled(false);
+			getActionBar().setHomeButtonEnabled(false);
+		}
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		getWindow().requestFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.activity_main);
-		
-		//Create drawer items for the custom adapter
-		ObjectDrawerItem[] drawerItem = new ObjectDrawerItem[6];
-		 
-		drawerItem[0] = new ObjectDrawerItem(R.drawable.ic_av_home, getString(R.string.nav_drawer_home));
-		drawerItem[1] = new ObjectDrawerItem(R.drawable.ic_all, getString(R.string.nav_drawer_all_restaurants));
-		drawerItem[2] = new ObjectDrawerItem(R.drawable.ic_my_restaurants, getString(R.string.nav_drawer_my_restaurants));
-		drawerItem[3] = new ObjectDrawerItem(R.drawable.ic_added_today, getString(R.string.nav_drawer_added_today));
-		drawerItem[4] = new ObjectDrawerItem(R.drawable.ic_added_week, getString(R.string.nav_drawer_added_this_week));
-		drawerItem[5] = new ObjectDrawerItem(R.drawable.ic_updated, getString(R.string.nav_drawer_recently_updated));
-		
 
-		//mTitle = mDrawerTitle = getTitle();
-		//mTitles = getResources().getStringArray(R.array.titles_array);
+		// Create drawer items for the custom adapter
+		ObjectDrawerItem[] drawerItem = new ObjectDrawerItem[6];
+
+		drawerItem[0] = new ObjectDrawerItem(R.drawable.ic_av_home,
+				getString(R.string.nav_drawer_home));
+		drawerItem[1] = new ObjectDrawerItem(R.drawable.ic_all,
+				getString(R.string.nav_drawer_all_restaurants));
+		drawerItem[2] = new ObjectDrawerItem(R.drawable.ic_my_restaurants,
+				getString(R.string.nav_drawer_my_restaurants));
+		drawerItem[3] = new ObjectDrawerItem(R.drawable.ic_added_today,
+				getString(R.string.nav_drawer_added_today));
+		drawerItem[4] = new ObjectDrawerItem(R.drawable.ic_added_week,
+				getString(R.string.nav_drawer_added_this_week));
+		drawerItem[5] = new ObjectDrawerItem(R.drawable.ic_updated,
+				getString(R.string.nav_drawer_recently_updated));
+
+		// mTitle = mDrawerTitle = getTitle();
+		// mTitles = getResources().getStringArray(R.array.titles_array);
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
@@ -55,22 +83,29 @@ public class MainActivity extends FragmentActivity {
 		mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow,
 				GravityCompat.START);
 		// set up the drawer's list view with items and click listener
-//		mDrawerList.setAdapter(new ArrayAdapter<String>(this,
-//				R.layout.drawer_list_item, mTitles));
-		//Set custom adapter instead of standard adapter for icons
-		DrawerItemCustomAdapter adapter = new DrawerItemCustomAdapter(this, R.layout.list_item_drawer, drawerItem);
+		// mDrawerList.setAdapter(new ArrayAdapter<String>(this,
+		// R.layout.drawer_list_item, mTitles));
+		// Set custom adapter instead of standard adapter for icons
+		DrawerItemCustomAdapter adapter = new DrawerItemCustomAdapter(this,
+				R.layout.list_item_drawer, drawerItem);
 		mDrawerList.setAdapter(adapter);
 		mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
 		// enable ActionBar app icon to behave as action to toggle nav drawer
-		getActionBar().setDisplayHomeAsUpEnabled(true);
-		getActionBar().setHomeButtonEnabled(true);
+		
+			getActionBar().setDisplayHomeAsUpEnabled(true);
+			getActionBar().setHomeButtonEnabled(true);
+		
 
 		// ActionBarDrawerToggle ties together the the proper interactions
 		// between the sliding drawer and the action bar app icon
+		
 		mDrawerToggle = new ActionBarDrawerToggle(this, /* host Activity */
 		mDrawerLayout, /* DrawerLayout object */
-		R.drawable.ic_navigation_drawer, /* nav drawer image to replace 'Up' caret */
+		R.drawable.ic_navigation_drawer, /*
+										 * nav drawer image to replace 'Up'
+										 * caret
+										 */
 		R.string.drawer_open, /* "open drawer" description for accessibility */
 		R.string.drawer_close /* "close drawer" description for accessibility */
 		) {
@@ -86,10 +121,11 @@ public class MainActivity extends FragmentActivity {
 											// onPrepareOptionsMenu()
 			}
 		};
-		mDrawerLayout.setDrawerListener(mDrawerToggle);
-
-		if (savedInstanceState == null) {
-			selectItem(0);
+		if (!mIsDrawerLocked) {
+			mDrawerLayout.setDrawerListener(mDrawerToggle);
+			if (savedInstanceState == null) {
+				selectItem(0);
+			}
 		}
 	}
 
@@ -163,13 +199,14 @@ public class MainActivity extends FragmentActivity {
 					.replace(R.id.content_frame, myRestaurants)
 					.addToBackStack(null).commit();
 			break;
-			
+
 		case 3:
 
 			args.putString(RestaurantListFragment.QUERY_CODE,
 					RestaurantListFragment.RECENT_RESTAURANTS_ONE_DAY);
 			args.putInt(RestaurantListFragment.DATE_INCREMENT, -1);
-			args.putString(RestaurantListFragment.CRITERIA, RestaurantListFragment.CRITERIA_CREATED_AT);
+			args.putString(RestaurantListFragment.CRITERIA,
+					RestaurantListFragment.CRITERIA_CREATED_AT);
 			RestaurantListFragment recentRestaurantsOneDay = new RestaurantListFragment();
 			recentRestaurantsOneDay.setArguments(args);
 			fragmentManager = getSupportFragmentManager();
@@ -178,13 +215,14 @@ public class MainActivity extends FragmentActivity {
 					.replace(R.id.content_frame, recentRestaurantsOneDay)
 					.addToBackStack(null).commit();
 			break;
-			
+
 		case 4:
 
 			args.putString(RestaurantListFragment.QUERY_CODE,
 					RestaurantListFragment.RECENT_RESTAURANTS_ONE_WEEK);
 			args.putInt(RestaurantListFragment.DATE_INCREMENT, -7);
-			args.putString(RestaurantListFragment.CRITERIA, RestaurantListFragment.CRITERIA_CREATED_AT);
+			args.putString(RestaurantListFragment.CRITERIA,
+					RestaurantListFragment.CRITERIA_CREATED_AT);
 			RestaurantListFragment recentRestaurantsOneWeek = new RestaurantListFragment();
 			recentRestaurantsOneWeek.setArguments(args);
 			fragmentManager = getSupportFragmentManager();
@@ -193,13 +231,14 @@ public class MainActivity extends FragmentActivity {
 					.replace(R.id.content_frame, recentRestaurantsOneWeek)
 					.addToBackStack(null).commit();
 			break;
-			
+
 		case 5:
 
 			args.putString(RestaurantListFragment.QUERY_CODE,
 					RestaurantListFragment.RECENT_UPDATE);
 			args.putInt(RestaurantListFragment.DATE_INCREMENT, -1);
-			args.putString(RestaurantListFragment.CRITERIA, RestaurantListFragment.CRITERIA_UPDATED_AT);
+			args.putString(RestaurantListFragment.CRITERIA,
+					RestaurantListFragment.CRITERIA_UPDATED_AT);
 			RestaurantListFragment recentUpdate = new RestaurantListFragment();
 			recentUpdate.setArguments(args);
 			fragmentManager = getSupportFragmentManager();
@@ -209,12 +248,13 @@ public class MainActivity extends FragmentActivity {
 					.addToBackStack(null).commit();
 			break;
 		}
-		
 
 		// update selected item and title, then close the drawer
 		mDrawerList.setItemChecked(position, false);
 		// setTitle(mPlanetTitles[position]);
-		mDrawerLayout.closeDrawer(mDrawerList);
+		if (!mIsDrawerLocked) {
+			mDrawerLayout.closeDrawer(mDrawerList);
+		}
 	}
 
 	@Override
@@ -241,16 +281,16 @@ public class MainActivity extends FragmentActivity {
 		// Pass any configuration change to the drawer toggls
 		mDrawerToggle.onConfigurationChanged(newConfig);
 	}
-	
+
 	@Override
 	public void onBackPressed() {
-	    // TODO Auto-generated method stub
+		// TODO Auto-generated method stub
 
-	    if(mDrawerLayout.isDrawerOpen(Gravity.LEFT)){
-	        mDrawerLayout.closeDrawer(Gravity.LEFT);
-	    }else{
-	        super.onBackPressed();
-	    }
+		if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
+			mDrawerLayout.closeDrawer(Gravity.LEFT);
+		} else {
+			super.onBackPressed();
+		}
 	}
-	
+
 }
