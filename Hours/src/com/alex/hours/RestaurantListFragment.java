@@ -76,6 +76,7 @@ public class RestaurantListFragment extends ListFragment {
 	private ParseUser mCurrentUser;
 	private String mCurrentUserId;
 	private int mQueryCode;
+	private boolean mIsMobile;
 
 	@Override
 	public void onPause() {
@@ -193,8 +194,13 @@ public class RestaurantListFragment extends ListFragment {
 		NetworkInfo nMobile = check
 				.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 		boolean isWifi = nWifi.isConnected();
-		boolean isMobile = nMobile.isConnected();
-		if (!isWifi && !isMobile) {
+		if (nMobile != null) {
+			mIsMobile = nMobile.isConnected();
+		}
+		if(nMobile == null){
+			mIsMobile = false;
+		}
+		if (!isWifi && !mIsMobile) {
 
 			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 			builder.setMessage(R.string.connection_error)

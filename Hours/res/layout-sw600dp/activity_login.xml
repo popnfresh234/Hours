@@ -1,0 +1,70 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/AuthBackground"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LoginActivity" >
+
+    <ImageView style="@style/AuthBackgroundImage" />
+
+    <TextView
+        android:id="@+id/title"
+        style="@style/AuthTitle" />
+
+    <TextView
+        android:id="@+id/subtitle"
+        style="@style/AuthSubtitle" 
+        />
+
+    <LinearLayout
+        android:id="@+id/layoutHolder"
+        android:layout_width="wrap_content"
+        android:orientation="vertical"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/subtitle"
+        android:layout_centerHorizontal="true" >
+
+        <LinearLayout
+            android:id="@+id/editTextLayout"
+            style="@style/AuthFieldContainer" >
+
+            <EditText
+                android:id="@+id/usernameField"
+                style="@style/AuthEditText" >
+
+                <requestFocus />
+            </EditText>
+
+            <EditText
+                android:id="@+id/passwordField"
+                style="@style/AuthEditText"
+                android:hint="@string/password_hint"
+                android:inputType="textPassword" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/loginButton"
+            style="@style/AuthButton"
+            android:layout_below="@+id/editTextLayout"
+            android:text="@string/login_button_label" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/signUpText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layoutHolder"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="12dp"
+        android:text="@string/sign_up_text"
+        android:textColor="@android:color/white" />
+
+    <ProgressBar
+        android:id="@+id/progressBar1"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="invisible" />
+
+</RelativeLayout>

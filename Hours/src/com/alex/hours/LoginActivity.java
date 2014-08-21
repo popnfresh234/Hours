@@ -42,7 +42,6 @@ public class LoginActivity extends Activity {
 		mCheck = (ConnectivityManager) this
 				.getSystemService(Context.CONNECTIVITY_SERVICE);
 
-
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage(R.string.connection_error)
 				.setTitle(R.string.connection_error_title)
@@ -73,12 +72,19 @@ public class LoginActivity extends Activity {
 		mLoginButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				
-				NetworkInfo nWifi = mCheck.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-				NetworkInfo nMobile = mCheck.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+
+				NetworkInfo nWifi = mCheck
+						.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+				NetworkInfo nMobile = mCheck
+						.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 				boolean isWifi = nWifi.isConnected();
-				boolean isMobile = nMobile.isConnected();
-				if (!isWifi && !isMobile) {
+				if (nMobile != null) {
+					mIsMobile = nMobile.isConnected();
+				}
+				if(nMobile == null){
+					mIsMobile = false;
+				}
+				if (!isWifi && !mIsMobile) {
 
 					mDialog.show();
 

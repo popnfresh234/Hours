@@ -105,7 +105,6 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		// TODO Auto-generated method stub
 		super.onCreateOptionsMenu(menu, inflater);
 		menu.clear();
 	}
@@ -116,9 +115,7 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 		if (getArguments() != null) {
 			Log.i("args", getArguments().toString());
 		}
-		// get actionbar and set home button
-		final ActionBar actionBar = getActivity().getActionBar();
-		actionBar.setDisplayHomeAsUpEnabled(true);
+
 		// setup ACL
 		parseACL = new ParseACL(ParseUser.getCurrentUser());
 		parseACL.setPublicReadAccess(true);

@@ -23,12 +23,17 @@
         android:text="@string/main_fragment_subtitle"
         android:textColor="@android:color/white"
         android:textSize="30sp" />
-
+<LinearLayout
+        android:id="@+id/layoutHolder"
+        android:layout_width="wrap_content"
+        android:orientation="vertical"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/subtitle"
+        android:layout_centerHorizontal="true" >
     <LinearLayout
         android:id="@+id/editTextLayout"
         style="@style/AuthFieldContainer"
-        android:layout_below="@id/subtitle"
-        android:layout_centerHorizontal="true"
+
         android:layout_marginTop="15dp" >
 
         <EditText
@@ -42,7 +47,7 @@
         style="@style/AuthButton"
         android:layout_below="@id/editTextLayout"
         android:text="@string/search_title" />
-
+</LinearLayout>
     <!--  
     <TextView
         android:id="@+id/secondSubtitle"
@@ -60,12 +65,12 @@
         android:id="@+id/allRestaurantsButton"
         style="@style/AuthButton"
         android:layout_marginTop="32dp"
-        android:layout_below="@id/searchButton"
+        android:layout_below="@id/layoutHolder"
         android:layout_width="wrap_content"
         android:layout_centerHorizontal="true"
         android:paddingLeft="32dp"
         android:paddingRight="32dp"
-        android:text="@string/subtitle_all_the_restaurants" 
-        />
+        android:text="@string/subtitle_all_the_restaurants"
+        android:visibility="invisible" />
 
 </RelativeLayout>

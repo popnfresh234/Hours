@@ -38,12 +38,14 @@ public class MainActivity extends FragmentActivity {
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
+		Log.i("onResume", "called");
 		FrameLayout frameLayout = (FrameLayout) findViewById(R.id.content_frame);
 		if (((ViewGroup.MarginLayoutParams) frameLayout.getLayoutParams()).leftMargin == (int) getResources()
 				.getDimension(R.dimen.drawer_size)) {
 			Log.i("LOCK", "LOCK");
 			mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_OPEN,
 					mDrawerList);
+			mDrawerLayout.setFocusableInTouchMode(false);
 			mDrawerLayout.setScrimColor(Color.TRANSPARENT);
 			mIsDrawerLocked = true;
 			getActionBar().setDisplayHomeAsUpEnabled(false);
@@ -53,6 +55,7 @@ public class MainActivity extends FragmentActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		Log.i("onCreate", "called");
 		super.onCreate(savedInstanceState);
 		getWindow().requestFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.activity_main);
@@ -92,14 +95,13 @@ public class MainActivity extends FragmentActivity {
 		mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
 		// enable ActionBar app icon to behave as action to toggle nav drawer
-		
-			getActionBar().setDisplayHomeAsUpEnabled(true);
-			getActionBar().setHomeButtonEnabled(true);
-		
+
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+		getActionBar().setHomeButtonEnabled(true);
 
 		// ActionBarDrawerToggle ties together the the proper interactions
 		// between the sliding drawer and the action bar app icon
-		
+
 		mDrawerToggle = new ActionBarDrawerToggle(this, /* host Activity */
 		mDrawerLayout, /* DrawerLayout object */
 		R.drawable.ic_navigation_drawer, /*
@@ -272,7 +274,9 @@ public class MainActivity extends FragmentActivity {
 	protected void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
 		// Sync the toggle state after onRestoreInstanceState has occurred.
+
 		mDrawerToggle.syncState();
+
 	}
 
 	@Override
@@ -285,10 +289,14 @@ public class MainActivity extends FragmentActivity {
 	@Override
 	public void onBackPressed() {
 		// TODO Auto-generated method stub
-
-		if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
-			mDrawerLayout.closeDrawer(Gravity.LEFT);
-		} else {
+		if (!mIsDrawerLocked) {
+			if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
+				mDrawerLayout.closeDrawer(Gravity.LEFT);
+			} else {
+				super.onBackPressed();
+			}
+		}
+		if (mIsDrawerLocked) {
 			super.onBackPressed();
 		}
 	}

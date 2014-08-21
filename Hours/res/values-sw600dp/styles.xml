@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     File created by the Android Action Bar Style Generator
+
+     Copyright (C) 2011 The Android Open Source Project
+     Copyright (C) 2012 readyState Software Ltd
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+  
+          http://www.apache.org/licenses/LICENSE-2.0
+  
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="Theme.Hours" parent="@android:style/Theme.Holo.Light.DarkActionBar">
+        <item name="android:actionBarItemBackground">@drawable/selectable_background_hours</item>
+        <item name="android:popupMenuStyle">@style/PopupMenu.Hours</item>
+        <item name="android:dropDownListViewStyle">@style/DropDownListView.Hours</item>
+        <item name="android:actionBarTabStyle">@style/ActionBarTabStyle.Hours</item>
+        <item name="android:actionDropDownStyle">@style/DropDownNav.Hours</item>
+        <item name="android:actionBarStyle">@style/ActionBar.Solid.Hours</item>
+        <item name="android:actionModeBackground">@drawable/cab_background_top_hours</item>
+        <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_hours</item>
+        <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Hours</item>
+        <item name="android:editTextBackground">@drawable/apptheme_edit_text_holo_light</item>
+        <item name="android:actionMenuTextColor">@color/white</item>
+        <item name="android:actionModeCloseDrawable">@drawable/ic_action_accept</item>
+        <item name="android:homeAsUpIndicator">@drawable/ic_action_previous_item</item>
+        <item name="android:actionOverflowButtonStyle">@style/Theme.Hours.Overflow</item>
+        <item name="android:listViewStyle">@style/Theme.Hours.LightOrangeBackground</item>
+        <item name="android:actionBarWidgetTheme">@style/Theme.Hours.Widget</item>
+        <item name="android:itemTextAppearance">@style/MenuTextAppearance</item>
+        <item name="android:listChoiceIndicatorMultiple">@drawable/apptheme_btn_check_holo_light</item>
+        <item name="android:buttonStyle">@style/ButtonAppTheme</item>
+        <item name="android:imageButtonStyle">@style/ImageButtonAppTheme</item>
+    </style>
+
+    <style name="ButtonAppTheme" parent="android:Widget.Holo.Light.Button">
+        <item name="android:background">@drawable/apptheme_btn_default_holo_light</item>
+    </style>
+
+    <style name="ImageButtonAppTheme" parent="android:Widget.Holo.Light.ImageButton">
+        <item name="android:background">@drawable/apptheme_btn_default_holo_light</item>
+    </style>
+
+    <style name="MenuTextAppearance">
+        <item name="android:textColor">@color/dropDownMenuTextColor</item>
+    </style>
+
+    <style name="Theme.Hours.LightOrangeBackground">
+        <item name="android:background">@color/light_orange_background</item>
+    </style>
+
+    <style name="Theme.Hours.Overflow" parent="@android:style/Widget.ActionButton.Overflow">
+        <item name="android:src">@drawable/ic_action_overflow</item>
+    </style>
+
+    <style name="ActionBar.Solid.Hours" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">@drawable/ab_solid_hours</item>
+        <item name="android:backgroundStacked">@drawable/ab_stacked_solid_hours</item>
+        <item name="android:backgroundSplit">@drawable/ab_bottom_solid_hours</item>
+        <item name="android:progressBarStyle">@style/ProgressBar.Hours</item>
+        <item name="android:titleTextStyle">@style/ActionBarText.Hours</item>
+    </style>
+
+    <style name="ActionBarText.Hours" parent="@android:style/TextAppearance">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+
+
+    <style name="PopupMenu.Hours" parent="@android:style/Widget.Holo.ListPopupWindow">
+        <item name="android:popupBackground">@drawable/menu_dropdown_panel_hours</item>
+    </style>
+
+    <style name="DropDownListView.Hours" parent="@android:style/Widget.Holo.ListView.DropDown">
+        <item name="android:listSelector">@drawable/selectable_background_hours</item>
+    </style>
+
+    <style name="ActionBarTabStyle.Hours" parent="@android:style/Widget.Holo.ActionBar.TabView">
+        <item name="android:background">@drawable/tab_indicator_ab_hours</item>
+    </style>
+
+    <style name="DropDownNav.Hours" parent="@android:style/Widget.Holo.Spinner">
+        <item name="android:background">@drawable/spinner_background_ab_hours</item>
+        <item name="android:popupBackground">@drawable/menu_dropdown_panel_hours</item>
+        <item name="android:dropDownSelector">@drawable/selectable_background_hours</item>
+    </style>
+
+    <style name="ProgressBar.Hours" parent="@android:style/Widget.Holo.ProgressBar.Horizontal">
+        <item name="android:progressDrawable">@drawable/progress_horizontal_hours</item>
+    </style>
+
+    <style name="ActionButton.CloseMode.Hours" parent="@android:style/Widget.Holo.ActionButton.CloseMode">
+        <item name="android:background">@drawable/btn_cab_done_hours</item>
+    </style>
+
+    <!-- this style is only referenced in a Light.DarkActionBar based theme -->
+    <style name="Theme.Hours.Widget" parent="@android:style/Theme.Holo">
+        <item name="android:popupMenuStyle">@style/PopupMenu.Hours</item>
+        <item name="android:dropDownListViewStyle">@style/DropDownListView.Hours</item>
+    </style>
+
+    <style name="AuthBackground">
+        <item name="android:background">@drawable/background_fill</item>
+    </style>
+
+    <style name="AuthBackgroundImage">
+        <item name="android:scaleType">fitStart</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_alignParentLeft">true</item>
+        <item name="android:layout_alignParentTop">true</item>
+        <item name="android:src">@drawable/background</item>
+    </style>
+
+    <style name="AuthTitle" parent="android:Widget.Holo.Light.TextView">
+        <item name="android:layout_marginTop">32dp</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">60sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_alignParentTop">true</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:text">@string/app_name</item>
+    </style>
+
+    <style name="AuthSubtitle" parent="AuthTitle">
+        <item name="android:textSize">13sp</item>
+        <item name="android:layout_marginTop">0dp</item>
+        <item name="android:layout_alignParentTop">false</item>
+        <item name="android:layout_below">@+id/title</item>
+        <item name="android:text">@string/subtitle</item>
+    </style>
+
+    <style name="AuthFieldContainer">
+        <item name="android:background">@android:color/white</item>
+        <item name="android:layout_marginLeft">@dimen/activity_horizontal_margin</item>
+        <item name="android:layout_marginRight">@dimen/activity_horizontal_margin</item>
+        <item name="android:layout_marginTop">@dimen/login_vertical_margin</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:paddingBottom">@dimen/login_vertical_padding</item>
+        <item name="android:paddingLeft">@dimen/login_horizontal_padding</item>
+        <item name="android:paddingRight">@dimen/login_horizontal_padding</item>
+        <item name="android:paddingTop">@dimen/login_vertical_padding</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_below">@id/layoutHolder</item>
+        <item name="android:layout_centerHorizontal">true</item>
+    </style>
+
+    <style name="AuthEditText" parent="android:Widget.Holo.Light.EditText">
+        <item name="android:ems">10</item>
+        <item name="android:textColorHint">@color/light_gray</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="AuthButton" parent="android:Widget.Holo.Light.Button">
+        <item name="android:background">@drawable/button_custom</item>
+        <item name="android:layout_marginLeft">@dimen/activity_horizontal_margin</item>
+        <item name="android:layout_marginRight">@dimen/activity_horizontal_margin</item>
+        <item name="android:textColor">@color/text_color</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="CustomListSeperator" parent="@android:style/Widget.Holo.Light.TextView">
+        <item name="android:background">@drawable/list_section_divider</item>
+    </style>
+
+    <style name="restaurantTextView" parent="@style/CustomListSeperator">
+        <item name="android:paddingLeft">@dimen/text_view_padding</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="restaurantDayOfWeekTextView" parent="android:Widget.Holo.Light.TextView">
+        <item name="android:layout_marginLeft">@dimen/activity_horizontal_margin</item>
+        <item name="android:layout_marginRight">@dimen/activity_horizontal_margin</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">2</item>
+    </style>
+
+    <style name="restaurantCheckbox">
+        <item name="android:layout_marginLeft">@dimen/activity_horizontal_margin</item>
+        <item name="android:layout_marginRight">@dimen/activity_horizontal_margin</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">2</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="restaurantHoursButton">
+        <item name="android:background">@drawable/apptheme_btn_default_holo_light</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="restaurantSaveAndCancelButtons">
+        <item name="android:background">@drawable/apptheme_btn_default_holo_light</item>
+    </style>
+
+    <style name="restaurantEditText" parent="android:Widget.Holo.Light.EditText">
+        <item name="android:inputType">textNoSuggestions|textCapWords</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+</resources>
