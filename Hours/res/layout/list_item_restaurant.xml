@@ -5,14 +5,14 @@
     android:background="@android:color/transparent" >
 
     <LinearLayout
-        android:baselineAligned="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/restaurant_list_vertical_margin"
         android:layout_marginLeft="@dimen/restaurant_list_horizontal_margin"
         android:layout_marginRight="@dimen/restaurant_list_horizontal_margin"
         android:layout_marginTop="@dimen/restaurant_list_vertical_margin"
-        android:layout_marginBottom="@dimen/restaurant_list_vertical_margin"
         android:background="@drawable/background_activated"
+        android:baselineAligned="false"
         android:orientation="horizontal" >
 
         <LinearLayout
@@ -51,7 +51,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="20dp"
-                android:paddingRight="4dp"
+                
                 android:text="@string/sunday_short" />
 
             <TextView
@@ -59,7 +59,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="4dp"
-                android:paddingRight="4dp"
+            
                 android:text="@string/monday_short" />
 
             <TextView
@@ -67,7 +67,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="4dp"
-                android:paddingRight="4dp"
+                
                 android:text="@string/tuesday_short" />
 
             <TextView
@@ -75,7 +75,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="4dp"
-                android:paddingRight="4dp"
+             
                 android:text="@string/wednesday_short" />
 
             <TextView
@@ -83,7 +83,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="4dp"
-                android:paddingRight="4dp"
+                
                 android:text="@string/thursday_short" />
 
             <TextView
@@ -91,7 +91,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="4dp"
-                android:paddingRight="4dp"
+        
                 android:text="@string/friday_short" />
 
             <TextView
@@ -99,9 +99,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="4dp"
-                android:paddingRight="4dp"
+           
                 android:text="@string/saturday_short" />
         </LinearLayout>
+
+        
+
+            <ImageView
+                android:id="@+id/favourite_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/ic_rating_not_important" />
+
     </LinearLayout>
 
 </LinearLayout>

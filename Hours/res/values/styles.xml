@@ -101,6 +101,7 @@
 
     <style name="ActionButton.CloseMode.Hours" parent="@android:style/Widget.Holo.ActionButton.CloseMode">
         <item name="android:background">@drawable/btn_cab_done_hours</item>
+        <item name="android:visibility">gone</item>
     </style>
 
     <!-- this style is only referenced in a Light.DarkActionBar based theme -->

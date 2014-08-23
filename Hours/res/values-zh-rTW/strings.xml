@@ -37,7 +37,8 @@
     <string name="nav_drawer_all_restaurants">全部餐廳</string>
     <string name="nav_drawer_home">首頁</string>
     <string name="nav_drawer_my_restaurants">我的餐廳</string>
-    <string name="nav_drawer_recently_updated">最近新增餐廳</string>
+    <string name="nav_drawer_recently_updated">最近更新餐廳</string>
+    <string name="nav_drawer_my_favorites">我的最愛</string>
     <string name="new_restaurant">新增餐廳</string>
     <string name="password_hint">密碼</string>
     <string name="picture_button_label">新增照片</string>
@@ -78,5 +79,14 @@
         <item>拍一張照</item>
         <item>選擇照片</item>
     </string-array>
+    
+    <string name="recover_password_button_label">重新取得密碼</string>
+        <string name="recover_password_subtitle">輸入您的EMAIL</string>
+        <string name="title_activity_password_recovery">忘記密碼</string>
+        <string name="password_recovery_e_mail_sent">密碼EMAIL已寄出!</string>
+        <string name="invalid_e_mail">無效的EMAIL</string>
+        <string name="e_mail_not_found">您輸入的EMAIL不存在</string>
+        <string name="menu_quit_label">離開</string>
+        <string name="recover_password_text">忘記密碼?</string>
 
 </resources>

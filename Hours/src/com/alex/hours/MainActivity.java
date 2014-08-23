@@ -36,7 +36,6 @@ public class MainActivity extends FragmentActivity {
 
 	@Override
 	protected void onResume() {
-		// TODO Auto-generated method stub
 		super.onResume();
 		Log.i("onResume", "called");
 		FrameLayout frameLayout = (FrameLayout) findViewById(R.id.content_frame);
@@ -61,20 +60,23 @@ public class MainActivity extends FragmentActivity {
 		setContentView(R.layout.activity_main);
 
 		// Create drawer items for the custom adapter
-		ObjectDrawerItem[] drawerItem = new ObjectDrawerItem[6];
+		ObjectDrawerItem[] drawerItem = new ObjectDrawerItem[7];
 
 		drawerItem[0] = new ObjectDrawerItem(R.drawable.ic_av_home,
 				getString(R.string.nav_drawer_home));
-		drawerItem[1] = new ObjectDrawerItem(R.drawable.ic_all,
+		drawerItem[1] = new ObjectDrawerItem(R.drawable.ic_my_favorites,
+				getString(R.string.nav_drawer_my_favorites));
+		drawerItem[2] = new ObjectDrawerItem(R.drawable.ic_all,
 				getString(R.string.nav_drawer_all_restaurants));
-		drawerItem[2] = new ObjectDrawerItem(R.drawable.ic_my_restaurants,
+		drawerItem[3] = new ObjectDrawerItem(R.drawable.ic_my_restaurants,
 				getString(R.string.nav_drawer_my_restaurants));
-		drawerItem[3] = new ObjectDrawerItem(R.drawable.ic_added_today,
+		drawerItem[4] = new ObjectDrawerItem(R.drawable.ic_added_today,
 				getString(R.string.nav_drawer_added_today));
-		drawerItem[4] = new ObjectDrawerItem(R.drawable.ic_added_week,
+		drawerItem[5] = new ObjectDrawerItem(R.drawable.ic_added_week,
 				getString(R.string.nav_drawer_added_this_week));
-		drawerItem[5] = new ObjectDrawerItem(R.drawable.ic_updated,
+		drawerItem[6] = new ObjectDrawerItem(R.drawable.ic_updated,
 				getString(R.string.nav_drawer_recently_updated));
+		
 
 		// mTitle = mDrawerTitle = getTitle();
 		// mTitles = getResources().getStringArray(R.array.titles_array);
@@ -113,13 +115,13 @@ public class MainActivity extends FragmentActivity {
 		) {
 			public void onDrawerClosed(View view) {
 				getActionBar().setTitle(mTitle);
-				invalidateOptionsMenu(); // creates call to
+				//invalidateOptionsMenu(); // creates call to
 											// onPrepareOptionsMenu()
 			}
 
 			public void onDrawerOpened(View drawerView) {
 				getActionBar().setTitle(mDrawerTitle);
-				invalidateOptionsMenu(); // creates call to
+				//invalidateOptionsMenu(); // creates call to
 											// onPrepareOptionsMenu()
 			}
 		};
@@ -165,10 +167,10 @@ public class MainActivity extends FragmentActivity {
 	}
 
 	private void selectItem(int position) {
+		Log.i("Item selected", "item" +position);
 		// update the main content by replacing fragments
 		FragmentManager fragmentManager;
 		Bundle args = new Bundle();
-		Log.i("POSITION", "position: " + position);
 		switch (position) {
 		case 0:
 			MainActivityFragment mainActivity = new MainActivityFragment();
@@ -180,6 +182,18 @@ public class MainActivity extends FragmentActivity {
 		case 1:
 
 			args.putString(RestaurantListFragment.QUERY_CODE,
+					RestaurantListFragment.FAVORITES);
+			RestaurantListFragment favorites = new RestaurantListFragment();
+			favorites.setArguments(args);
+			fragmentManager = getSupportFragmentManager();
+			fragmentManager.popBackStack();
+			fragmentManager.beginTransaction()
+					.replace(R.id.content_frame, favorites)
+					.addToBackStack(null).commit();
+			break;
+		case 2:
+			
+			args.putString(RestaurantListFragment.QUERY_CODE,
 					RestaurantListFragment.ALL_RESTAURATNS);
 			RestaurantListFragment allRestaurants = new RestaurantListFragment();
 			allRestaurants.setArguments(args);
@@ -189,7 +203,7 @@ public class MainActivity extends FragmentActivity {
 					.replace(R.id.content_frame, allRestaurants)
 					.addToBackStack(null).commit();
 			break;
-		case 2:
+		case 3:
 
 			args.putString(RestaurantListFragment.QUERY_CODE,
 					RestaurantListFragment.MY_RESTAURATNS);
@@ -202,7 +216,7 @@ public class MainActivity extends FragmentActivity {
 					.addToBackStack(null).commit();
 			break;
 
-		case 3:
+		case 4:
 
 			args.putString(RestaurantListFragment.QUERY_CODE,
 					RestaurantListFragment.RECENT_RESTAURANTS_ONE_DAY);
@@ -218,7 +232,7 @@ public class MainActivity extends FragmentActivity {
 					.addToBackStack(null).commit();
 			break;
 
-		case 4:
+		case 5:
 
 			args.putString(RestaurantListFragment.QUERY_CODE,
 					RestaurantListFragment.RECENT_RESTAURANTS_ONE_WEEK);
@@ -234,7 +248,7 @@ public class MainActivity extends FragmentActivity {
 					.addToBackStack(null).commit();
 			break;
 
-		case 5:
+		case 6:
 
 			args.putString(RestaurantListFragment.QUERY_CODE,
 					RestaurantListFragment.RECENT_UPDATE);
@@ -249,6 +263,7 @@ public class MainActivity extends FragmentActivity {
 					.replace(R.id.content_frame, recentUpdate)
 					.addToBackStack(null).commit();
 			break;
+		
 		}
 
 		// update selected item and title, then close the drawer

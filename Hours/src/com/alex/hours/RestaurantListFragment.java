@@ -18,6 +18,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ListFragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -41,7 +42,9 @@ import com.parse.FindCallback;
 import com.parse.ParseAnalytics;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
+import com.parse.ParseRelation;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 public class RestaurantListFragment extends ListFragment {
 
@@ -54,6 +57,7 @@ public class RestaurantListFragment extends ListFragment {
 	public static final String RECENT_RESTAURANTS_ONE_DAY = "recent_restaurants_one_day";
 	public static final String RECENT_RESTAURANTS_ONE_WEEK = "recent_restaurants_one_week";
 	public static final String RECENT_UPDATE = "recent_update";
+	public static final String FAVORITES = "favorites";
 
 	// Codes for data passed in and out from fragment
 	public static final String QUERY = "query";
@@ -68,7 +72,8 @@ public class RestaurantListFragment extends ListFragment {
 	private static final int MY_RESTAURANT_QUERY_CODE = 1;
 	private static final int SEARCH_QUERY_CODE = 2;
 	private static final int DATE_QUERY_CODE = 3;
-	private static final int CLEAR_QUERY_CODE = 4;
+	private static final int FAVORITES_QUERY_CODE = 4;
+	private static final int CLEAR_QUERY_CODE = 5;
 
 	private Button mAddRestaurantButton;
 	protected List<Restaurant> mRestaurants;
@@ -77,6 +82,10 @@ public class RestaurantListFragment extends ListFragment {
 	private String mCurrentUserId;
 	private int mQueryCode;
 	private boolean mIsMobile;
+	private Restaurant mRestaurant;
+	private ParseRelation<Restaurant> mCurrentUserRelation;
+	private Menu mActionBarMenu;
+	private Boolean mHidden = false;
 
 	@Override
 	public void onPause() {
@@ -86,19 +95,41 @@ public class RestaurantListFragment extends ListFragment {
 
 	@Override
 	public void onResume() {
-		// Update list after coming back from creating new restaurant
 		super.onResume();
-		if (getArguments() != null
-				&& !getArguments().getString(QUERY_CODE).equals(SEARCH)) {
-			if (getArguments() != null
-					&& getArguments().getString(QUERY_CODE).equals(
-							MY_RESTAURATNS)) {
+		// Query parse depending on what code was passed in
+		// Moved to onResume so that list updates after adding new restaurant
+		// turn on progress indicator when fragment is created
+		getActivity().setProgressBarIndeterminateVisibility(true);
+		// If no argument is passed, show all restaurants
+		if (getArguments() == null) {
+			queryParse(1, null, null);
+		}
+		// If an argument is passed, check its query code and query accordingly
+		if (getArguments() != null) {
+			String queryCode = (String) getArguments().get(QUERY_CODE);
+			if (queryCode.equals(MY_RESTAURATNS)) {
 				mQueryCode = MY_RESTAURANT_QUERY_CODE;
-				getActivity().setProgressBarIndeterminateVisibility(true);
 				queryParse(1, null, null);
-			} else {
+			}
+			if (queryCode.equals(ALL_RESTAURATNS)) {
 				mQueryCode = ALL_RESTAURANT_QUERY_CODE;
-				getActivity().setProgressBarIndeterminateVisibility(true);
+				queryParse(1, null, null);
+			}
+			if (queryCode.equals(SEARCH)) {
+				mQueryCode = SEARCH_QUERY_CODE;
+				String query = getArguments().getString(QUERY);
+				queryParse(1, null, query);
+			}
+			if (queryCode.equals(RECENT_RESTAURANTS_ONE_DAY)
+					|| queryCode.equals(RECENT_RESTAURANTS_ONE_WEEK)
+					|| queryCode.equals(RECENT_UPDATE)) {
+				mQueryCode = DATE_QUERY_CODE;
+				int dateIncrement = getArguments().getInt(DATE_INCREMENT);
+				String criteria = getArguments().getString(CRITERIA);
+				queryParse(dateIncrement, criteria, null);
+			}
+			if (queryCode.equals(FAVORITES)) {
+				mQueryCode = FAVORITES_QUERY_CODE;
 				queryParse(1, null, null);
 			}
 		}
@@ -106,10 +137,303 @@ public class RestaurantListFragment extends ListFragment {
 
 	@Override
 	public void onPrepareOptionsMenu(Menu menu) {
+
+	}
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		// Turn on action bar
+		this.setRetainInstance(true);
+		setHasOptionsMenu(true);
+		// Set parse analytics
+		ParseAnalytics.trackAppOpened(getActivity().getIntent());
+
+		// Check if user is logged in, if not then boot to login screen
+		ParseUser currentUser = ParseUser.getCurrentUser();
+		mCurrentUser = currentUser;
+		if (currentUser == null) {
+			navigateToLogin();
+
+		} else {
+			mCurrentUserId = ParseUser.getCurrentUser().getObjectId()
+					.toString();
+
+		}
+
+		// check for network
+		ConnectivityManager check = (ConnectivityManager) getActivity()
+				.getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo nWifi = check.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+		NetworkInfo nMobile = check
+				.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+		boolean isWifi = nWifi.isConnected();
+		if (nMobile != null) {
+			mIsMobile = nMobile.isConnected();
+		}
+		if (nMobile == null) {
+			mIsMobile = false;
+		}
+		if (!isWifi && !mIsMobile) {
+
+			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+			builder.setMessage(R.string.connection_error)
+					.setTitle(R.string.connection_error_title)
+					.setPositiveButton(android.R.string.ok, null);
+			AlertDialog dialog = builder.create();
+			dialog.show();
+
+		}
+
+	}
+
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		View v = inflater.inflate(R.layout.fragment_restaurant_list, container,
+				false);
+		// Set up swipe refresh layout and set colors
+		mSwipeRefreshLayout = (SwipeRefreshLayout) v
+				.findViewById(R.id.swipeRefreshLayout);
+		mSwipeRefreshLayout.setOnRefreshListener(mOnRefreshListener);
+		mSwipeRefreshLayout.setColorSchemeResources(R.color.swipeRefresh1,
+				R.color.swipeRefresh2, R.color.swipeRefresh3,
+				R.color.swipeRefresh4);
+
+		// Listener for empty view add restaurant button
+		mAddRestaurantButton = (Button) v
+				.findViewById(R.id.add_new_restaurant_button);
+		mAddRestaurantButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				startRestaurantActivity();
+			}
+		});
+		if (mCurrentUser != null) {
+			if (mCurrentUserId.equals(ADMIN)
+					|| mCurrentUserId.equals("45LT0GnGVU")) {
+				ListView listView = (ListView) v
+						.findViewById(android.R.id.list);
+				if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+					registerForContextMenu(listView);
+				} else {
+					listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+					listView.setMultiChoiceModeListener(new MultiChoiceModeListener() {
+
+						public boolean onPrepareActionMode(ActionMode mode,
+								Menu menu) {
+							return false;
+							// not used
+						}
+
+						public void onDestroyActionMode(ActionMode mode) {
+							// not used
+
+						}
+
+						public boolean onCreateActionMode(ActionMode mode,
+								Menu menu) {
+							MenuInflater inflater = mode.getMenuInflater();
+							inflater.inflate(
+									R.menu.restaurant_list_item_context_admin,
+									menu);
+							return true;
+						}
+
+						public boolean onActionItemClicked(ActionMode mode,
+								MenuItem item) {
+							switch (item.getItemId()) {
+							case R.id.menu_item_delete_restaurant:
+								// get adapter
+								RestaurantAdapter adapter = (RestaurantAdapter) getListAdapter();
+								// go through items in adapter and delete if
+								// checked
+								for (int i = adapter.getCount() - 1; i >= 0; i--) {
+									if (getListView().isItemChecked(i)) {
+										Restaurant r = (adapter.getItem(i));
+										getActivity()
+												.setProgressBarIndeterminateVisibility(
+														true);
+
+										r.deleteInBackground(new DeleteCallback() {
+
+											@Override
+											public void done(ParseException e) {
+												if (getArguments() != null
+														&& getArguments()
+																.getString(
+																		QUERY_CODE)
+																.equals(MY_RESTAURATNS)) {
+													mQueryCode = MY_RESTAURANT_QUERY_CODE;
+													queryParse(1, null, null);
+												} else {
+													mQueryCode = ALL_RESTAURANT_QUERY_CODE;
+													queryParse(1, null, null);
+												}
+											}
+										});
+
+									}
+								}
+								mode.finish();
+								return true;
+							default:
+								return false;
+							}
+						}
+
+						public void onItemCheckedStateChanged(ActionMode mode,
+								int position, long id, boolean checked) {
+							// Not used
+						}
+					});
+				}
+			} else {
+				// Set contextual action bar for the rest of the users
+				ListView listView = (ListView) v
+						.findViewById(android.R.id.list);
+				if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+					registerForContextMenu(listView);
+				} else {
+					listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+					listView.setMultiChoiceModeListener(new MultiChoiceModeListener() {
+
+						public boolean onPrepareActionMode(ActionMode mode,
+								Menu menu) {
+							return false;
+							// not used
+						}
+
+						public void onDestroyActionMode(ActionMode mode) {
+							// not used
+
+						}
+
+						public boolean onCreateActionMode(ActionMode mode,
+								Menu menu) {
+							MenuInflater inflater = mode.getMenuInflater();
+							inflater.inflate(
+									R.menu.restaurant_list_item_context, menu);
+							return true;
+						}
+
+						public boolean onActionItemClicked(ActionMode mode,
+								MenuItem item) {
+							switch (item.getItemId()) {
+							case R.id.menu_item_favourite_restaurant:
+								Log.i("ckicjed", "clicked");
+								// get adapter
+								RestaurantAdapter adapter = (RestaurantAdapter) getListAdapter();
+								// go through items in adapter and delete if
+								// checked
+								for (int i = adapter.getCount() - 1; i >= 0; i--) {
+									if (getListView().isItemChecked(i)) {
+										mRestaurant = (adapter.getItem(i));
+										ParseUser user = ParseUser
+												.getCurrentUser();
+										ParseRelation<Restaurant> relation = user
+												.getRelation(ParseConstants.RELATION_FAVORITE);
+										mCurrentUserRelation = relation;
+										mCurrentUserRelation.add(mRestaurant);
+										getActivity()
+												.setProgressBarIndeterminateVisibility(
+														true);
+										mCurrentUser
+												.saveInBackground(new SaveCallback() {
+
+													@Override
+													public void done(
+															ParseException arg0) {
+														// TODO
+														updateListView();
+													}
+												});
+
+									}
+								}
+								mode.finish();
+								return true;
+							case R.id.menu_item_unfavourite_restaurant:
+								Log.i("ckicjed", "unfavorite");
+								// get adapter
+								RestaurantAdapter adapter1 = (RestaurantAdapter) getListAdapter();
+								// go through items in adapter and delete if
+								// checked
+								for (int i = adapter1.getCount() - 1; i >= 0; i--) {
+									if (getListView().isItemChecked(i)) {
+										mRestaurant = (adapter1.getItem(i));
+										ParseUser user = ParseUser
+												.getCurrentUser();
+										ParseRelation<Restaurant> relation = user
+												.getRelation(ParseConstants.RELATION_FAVORITE);
+										mCurrentUserRelation = relation;
+										mCurrentUserRelation
+												.remove(mRestaurant);
+										getActivity()
+												.setProgressBarIndeterminateVisibility(
+														true);
+										mCurrentUser
+												.saveInBackground(new SaveCallback() {
+
+													@Override
+													public void done(
+															ParseException arg0) {
+														// TODO
+														updateListView();
+													}
+												});
+
+									}
+								}
+								mode.finish();
+								return true;
+							default:
+								return false;
+							}
+
+						}
+
+						public void onItemCheckedStateChanged(ActionMode mode,
+								int position, long id, boolean checked) {
+							// Not used
+						}
+					});
+				}
+			}
+		}
+
+		return v;
+	}
+
+	// Setup Options Menu
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		// TODO
+		// Moved here from on prepare options menu
+		super.onCreateOptionsMenu(menu, inflater);
+		// clear the menu
+		menu.clear();
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getActivity().getMenuInflater().inflate(R.menu.restaurant_list, menu);
+
+		Log.i("Preparing Options", "Preparing Options");
 		super.onPrepareOptionsMenu(menu);
 		menu.clear();
-		MenuInflater inflater = getActivity().getMenuInflater();
+
 		inflater.inflate(R.menu.restaurant_list, menu);
+
+		// Get a reference to the menu and disable buttons so they can't be
+		// pressed when loading list
+		// Re-enabled after the list is loaded in query parse method
+		mActionBarMenu = menu;
+		// if (mHidden == false) {
+		// for (int i = 0; i < mActionBarMenu.size(); i++) {
+		// mActionBarMenu.getItem(i).setEnabled(false);
+		// }
+		menu.findItem(R.id.menu_item_new_restaurant).setEnabled(false);
+		mHidden = true;
+		// }
+
 		// Get search view
 		SearchManager searchManager = (SearchManager) getActivity()
 				.getSystemService(Context.SEARCH_SERVICE);
@@ -166,200 +490,6 @@ public class RestaurantListFragment extends ListFragment {
 
 	}
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		// Turn on action bar
-		this.setRetainInstance(true);
-		setHasOptionsMenu(true);
-		// Set parse analytics
-		ParseAnalytics.trackAppOpened(getActivity().getIntent());
-
-		// Check if user is logged in, if not then boot to login screen
-		ParseUser currentUser = ParseUser.getCurrentUser();
-		mCurrentUser = currentUser;
-		if (currentUser == null) {
-			navigateToLogin();
-
-		} else {
-			mCurrentUserId = ParseUser.getCurrentUser().getObjectId()
-					.toString();
-
-		}
-
-		// check for network
-		ConnectivityManager check = (ConnectivityManager) getActivity()
-				.getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo nWifi = check.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-		NetworkInfo nMobile = check
-				.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-		boolean isWifi = nWifi.isConnected();
-		if (nMobile != null) {
-			mIsMobile = nMobile.isConnected();
-		}
-		if(nMobile == null){
-			mIsMobile = false;
-		}
-		if (!isWifi && !mIsMobile) {
-
-			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-			builder.setMessage(R.string.connection_error)
-					.setTitle(R.string.connection_error_title)
-					.setPositiveButton(android.R.string.ok, null);
-			AlertDialog dialog = builder.create();
-			dialog.show();
-
-		}
-		// turn on progress indicator when fragment is created
-		getActivity().setProgressBarIndeterminateVisibility(true);
-		// If no argument is passed, show all restaurants
-		if (getArguments() == null) {
-			queryParse(1, null, null);
-		}
-		// If an argument is passed, check its query code and query accordingly
-		if (getArguments() != null) {
-			String queryCode = (String) getArguments().get(QUERY_CODE);
-			if (queryCode.equals(MY_RESTAURATNS)) {
-				mQueryCode = MY_RESTAURANT_QUERY_CODE;
-				queryParse(1, null, null);
-			}
-			if (queryCode.equals(ALL_RESTAURATNS)) {
-				mQueryCode = ALL_RESTAURANT_QUERY_CODE;
-				queryParse(1, null, null);
-			}
-			if (queryCode.equals(SEARCH)) {
-				mQueryCode = SEARCH_QUERY_CODE;
-				String query = getArguments().getString(QUERY);
-				queryParse(1, null, query);
-			}
-			if (queryCode.equals(RECENT_RESTAURANTS_ONE_DAY)
-					|| queryCode.equals(RECENT_RESTAURANTS_ONE_WEEK)
-					|| queryCode.equals(RECENT_UPDATE)) {
-				mQueryCode = DATE_QUERY_CODE;
-				int dateIncrement = getArguments().getInt(DATE_INCREMENT);
-				String criteria = getArguments().getString(CRITERIA);
-				queryParse(dateIncrement, criteria, null);
-			}
-		}
-	}
-
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		View v = inflater.inflate(R.layout.fragment_restaurant_list, container,
-				false);
-		// Set up swipe refresh layout and set colors
-		mSwipeRefreshLayout = (SwipeRefreshLayout) v
-				.findViewById(R.id.swipeRefreshLayout);
-		mSwipeRefreshLayout.setOnRefreshListener(mOnRefreshListener);
-		mSwipeRefreshLayout.setColorSchemeResources(R.color.swipeRefresh1,
-				R.color.swipeRefresh2, R.color.swipeRefresh3,
-				R.color.swipeRefresh4);
-
-		// Listener for empty view add restaurant button
-		mAddRestaurantButton = (Button) v
-				.findViewById(R.id.add_new_restaurant_button);
-		mAddRestaurantButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				startRestaurantActivity();
-			}
-		});
-		if (mCurrentUser != null) {
-			if (mCurrentUserId.equals(ADMIN)
-					|| mCurrentUserId.equals("45LT0GnGVU")) {
-				ListView listView = (ListView) v
-						.findViewById(android.R.id.list);
-				if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-					registerForContextMenu(listView);
-				} else {
-					listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-					listView.setMultiChoiceModeListener(new MultiChoiceModeListener() {
-
-						public boolean onPrepareActionMode(ActionMode mode,
-								Menu menu) {
-							return false;
-							// not used
-						}
-
-						public void onDestroyActionMode(ActionMode mode) {
-							// not used
-
-						}
-
-						public boolean onCreateActionMode(ActionMode mode,
-								Menu menu) {
-							MenuInflater inflater = mode.getMenuInflater();
-							inflater.inflate(
-									R.menu.restaurant_list_item_context, menu);
-							return true;
-						}
-
-						public boolean onActionItemClicked(ActionMode mode,
-								MenuItem item) {
-							switch (item.getItemId()) {
-							case R.id.menu_item_delete_restaurant:
-								// get adapter
-								RestaurantAdapter adapter = (RestaurantAdapter) getListAdapter();
-								// go through items in adapter and delete if
-								// checked
-								for (int i = adapter.getCount() - 1; i >= 0; i--) {
-									if (getListView().isItemChecked(i)) {
-										Restaurant r = (adapter.getItem(i));
-										getActivity()
-												.setProgressBarIndeterminateVisibility(
-														true);
-
-										r.deleteInBackground(new DeleteCallback() {
-
-											@Override
-											public void done(ParseException e) {
-												if (getArguments() != null
-														&& getArguments()
-																.getString(
-																		QUERY_CODE)
-																.equals(MY_RESTAURATNS)) {
-													mQueryCode = MY_RESTAURANT_QUERY_CODE;
-													queryParse(1, null, null);
-												} else {
-													mQueryCode = ALL_RESTAURANT_QUERY_CODE;
-													queryParse(1, null, null);
-												}
-											}
-										});
-
-									}
-								}
-								mode.finish();
-								return true;
-							default:
-								return false;
-							}
-						}
-
-						public void onItemCheckedStateChanged(ActionMode mode,
-								int position, long id, boolean checked) {
-							// Not used
-						}
-					});
-				}
-			}
-		}
-
-		return v;
-	}
-
-	// Setup Options Menu
-
-	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		super.onCreateOptionsMenu(menu, inflater);
-		// clear the menu
-		menu.clear();
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getActivity().getMenuInflater().inflate(R.menu.restaurant_list, menu);
-
-	}
-
 	// Responses to options menu in action bar
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -382,6 +512,9 @@ public class RestaurantListFragment extends ListFragment {
 		// break;
 		case R.id.menu_item_new_restaurant:
 			startRestaurantActivity();
+			break;
+		case R.id.action_quit:
+			getActivity().finish();
 			break;
 		}
 
@@ -412,6 +545,7 @@ public class RestaurantListFragment extends ListFragment {
 
 	private void queryParse(int dateIncrement, String criteria, String search) {
 		// create query
+		Log.i("QueryCode", "code: " + mQueryCode);
 		ParseQuery<Restaurant> query = new ParseQuery<Restaurant>("Restaurant");
 		if (ParseUser.getCurrentUser() != null) {
 
@@ -462,6 +596,14 @@ public class RestaurantListFragment extends ListFragment {
 				query.addAscendingOrder(ParseConstants.KEY_RESTAURANT_LOWERCASE_TITLE);
 
 			}
+			// Query for favorites
+			if (mQueryCode == FAVORITES_QUERY_CODE) {
+				ParseUser user = ParseUser.getCurrentUser();
+				ParseRelation<Restaurant> relation = user
+						.getRelation(ParseConstants.RELATION_FAVORITE);
+				query = relation.getQuery();
+				query.addAscendingOrder(ParseConstants.KEY_RESTAURANT_LOWERCASE_TITLE);
+			}
 			if (getArguments() == null) {
 				query.whereExists(ParseConstants.KEY_RESTAURANT_TITLE);
 				query.addAscendingOrder(ParseConstants.KEY_RESTAURANT_LOWERCASE_TITLE);
@@ -470,48 +612,88 @@ public class RestaurantListFragment extends ListFragment {
 			query.findInBackground(new FindCallback<Restaurant>() {
 				@Override
 				public void done(List<Restaurant> restaurants, ParseException e) {
-					mQueryCode = CLEAR_QUERY_CODE;
-					if (getActivity() != null) {
-						getActivity().setProgressBarIndeterminateVisibility(
-								false);
-					}
-					// Turn off swipe refresh indicator
-					if (mSwipeRefreshLayout.isRefreshing()) {
-						mSwipeRefreshLayout.setRefreshing(false);
-					}
+					// Query for restaurants complete, now execute another query
+					// to get the list of favorited restaurants
+					// Add to the adapter for processing so that stars can be
+					// set
+					mRestaurants = restaurants;
+					ParseUser user = ParseUser.getCurrentUser();
+					ParseRelation<Restaurant> relation = user
+							.getRelation(ParseConstants.RELATION_FAVORITE);
+					ParseQuery<Restaurant> relationQuery = relation.getQuery();
+					relationQuery
+							.findInBackground(new FindCallback<Restaurant>() {
 
-					if (e == null) {
-						// We found restaurants!
-						mRestaurants = restaurants;
+								@Override
+								public void done(List<Restaurant> favorites,
+										ParseException e) {
+									// for (int i = 0; i <
+									// mActionBarMenu.size(); i++) {
+									// //TODO
+									// //Actionbar items re-enabled here
+									// mActionBarMenu.getItem(i).setEnabled(
+									// true);
+									mActionBarMenu.findItem(
+											R.id.menu_item_new_restaurant)
+											.setEnabled(true);
+									mHidden = false;
 
-						String[] titles = new String[mRestaurants.size()];
-						int i = 0;
-						for (Restaurant restaurant : mRestaurants) {
-							titles[i] = restaurant
-									.getString(ParseConstants.KEY_RESTAURANT_TITLE);
-							i++;
-						}
-						if (getActivity() != null) {
-							if (getListView().getAdapter() == null) {
-								RestaurantAdapter adapter = new RestaurantAdapter(
-										getListView().getContext(),
-										mRestaurants);
-								setListAdapter(adapter);
-							} else {
-								// refill the adapter!
-								((RestaurantAdapter) getListView().getAdapter())
-										.refill(mRestaurants);
-							}
-						}
-					} else {
-						AlertDialog.Builder builder = new AlertDialog.Builder(
-								getActivity());
-						builder.setMessage(e.getMessage())
-								.setTitle(R.string.general_error_title)
-								.setPositiveButton(android.R.string.ok, null);
-						AlertDialog dialog = builder.create();
-						dialog.show();
-					}
+									// }
+
+									mQueryCode = CLEAR_QUERY_CODE;
+									if (getActivity() != null) {
+										getActivity()
+												.setProgressBarIndeterminateVisibility(
+														false);
+									}
+									// Turn off swipe refresh indicator
+									if (mSwipeRefreshLayout.isRefreshing()) {
+										mSwipeRefreshLayout
+												.setRefreshing(false);
+									}
+
+									if (e == null) {
+										// We found restaurants!
+
+										String[] titles = new String[mRestaurants
+												.size()];
+										int i = 0;
+										for (Restaurant restaurant : mRestaurants) {
+											titles[i] = restaurant
+													.getString(ParseConstants.KEY_RESTAURANT_TITLE);
+											i++;
+										}
+										if (getActivity() != null) {
+											// if (getListView().getAdapter() ==
+											// null) {
+											RestaurantAdapter adapter = new RestaurantAdapter(
+													getListView().getContext(),
+													mRestaurants, favorites);
+											setListAdapter(adapter);
+											// } else {
+											// // refill the adapter!
+											// ((RestaurantAdapter)
+											// getListView()
+											// .getAdapter())
+											// .refill(mRestaurants);
+											// }
+
+										}
+									} else {
+										AlertDialog.Builder builder = new AlertDialog.Builder(
+												getActivity());
+										builder.setMessage(e.getMessage())
+												.setTitle(
+														R.string.general_error_title)
+												.setPositiveButton(
+														android.R.string.ok,
+														null);
+										AlertDialog dialog = builder.create();
+										dialog.show();
+									}
+
+								}
+							});
 				}
 
 			});
@@ -521,17 +703,10 @@ public class RestaurantListFragment extends ListFragment {
 	protected OnRefreshListener mOnRefreshListener = new OnRefreshListener() {
 		@Override
 		public void onRefresh() {
-			if (getArguments() != null
-					&& getArguments().getString(QUERY_CODE).equals(
-							MY_RESTAURATNS)) {
-				mQueryCode = MY_RESTAURANT_QUERY_CODE;
-				queryParse(1, null, null);
-			} else {
-				mQueryCode = ALL_RESTAURANT_QUERY_CODE;
-				queryParse(1, null, null);
-			}
+			updateListView();
 
 		}
+
 	};
 
 	@Override
@@ -571,6 +746,40 @@ public class RestaurantListFragment extends ListFragment {
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
 		startActivity(intent);
+	}
+
+	private void updateListView() {
+		if (getArguments() != null) {
+			String queryCode = (String) getArguments().get(QUERY_CODE);
+			if (queryCode.equals(MY_RESTAURATNS)) {
+				mQueryCode = MY_RESTAURANT_QUERY_CODE;
+				queryParse(1, null, null);
+			}
+			if (queryCode.equals(ALL_RESTAURATNS)) {
+				mQueryCode = ALL_RESTAURANT_QUERY_CODE;
+				queryParse(1, null, null);
+			}
+			if (queryCode.equals(SEARCH)) {
+				mQueryCode = SEARCH_QUERY_CODE;
+				String query = getArguments().getString(QUERY);
+				queryParse(1, null, query);
+			}
+			if (queryCode.equals(RECENT_RESTAURANTS_ONE_DAY)
+					|| queryCode.equals(RECENT_RESTAURANTS_ONE_WEEK)
+					|| queryCode.equals(RECENT_UPDATE)) {
+				mQueryCode = DATE_QUERY_CODE;
+				int dateIncrement = getArguments().getInt(DATE_INCREMENT);
+				String criteria = getArguments().getString(CRITERIA);
+				queryParse(dateIncrement, criteria, null);
+			}
+			if (queryCode.equals(FAVORITES)) {
+				mQueryCode = FAVORITES_QUERY_CODE;
+				queryParse(1, null, null);
+			}
+		} else {
+			mQueryCode = ALL_RESTAURANT_QUERY_CODE;
+			queryParse(1, null, null);
+		}
 	}
 
 }

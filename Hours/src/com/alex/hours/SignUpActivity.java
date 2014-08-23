@@ -1,6 +1,5 @@
 package com.alex.hours;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -48,8 +47,8 @@ public class SignUpActivity extends Activity {
 		mDialog = builder.create();
 
 		// Hide the action bar
-		ActionBar actionBar = getActionBar();
-		actionBar.hide();
+//		ActionBar actionBar = getActionBar();
+//		actionBar.hide();
 		// Set progress bar
 		mProgressBar = (ProgressBar) findViewById(R.id.progressBar1);
 

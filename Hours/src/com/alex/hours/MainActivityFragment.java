@@ -129,6 +129,9 @@ public class MainActivityFragment extends Fragment implements OnFocusChangeListe
 			ParseUser.logOut();
 			navigateToLogin();
 			break;
+		case R.id.action_quit:
+			getActivity().finish();
+			break;
 //		case R.id.action_my_restaurants:
 //			// attach code so next fragment knows how it was created
 //

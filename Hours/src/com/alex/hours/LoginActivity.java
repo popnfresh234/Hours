@@ -31,6 +31,7 @@ public class LoginActivity extends Activity {
 	protected Boolean mIsMobile;
 
 	protected TextView mSignUpTextView;
+	protected TextView mForgotPasswordTextView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +64,18 @@ public class LoginActivity extends Activity {
 				Intent intent = new Intent(LoginActivity.this,
 						SignUpActivity.class);
 				startActivity(intent);
+			}
+		});
+		
+		mForgotPasswordTextView = (TextView) findViewById(R.id.forgotPasswordText);
+		mForgotPasswordTextView.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(LoginActivity.this,
+						PasswordRecoveryActivity.class);
+				startActivity(intent);
+				
 			}
 		});
 

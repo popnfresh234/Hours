@@ -4,6 +4,9 @@ public final class ParseConstants {
 	// Class name
 	public static final String CLASS_MESSAGES = "Messages";
 	
+	//Key for favourites relationship
+	public static final String RELATION_FAVORITE = "favorite";
+	
 	//Image keys
 	public static final String CLASS_IMAGES = "IMAGES";
 	public static final String KEY_FILE_TYPE = "fileType";

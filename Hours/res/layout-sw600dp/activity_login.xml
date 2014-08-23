@@ -5,7 +5,9 @@
     android:layout_height="match_parent"
     tools:context=".LoginActivity" >
 
-    <ImageView style="@style/AuthBackgroundImage" />
+    <ImageView
+        style="@style/AuthBackgroundImage"
+        android:contentDescription="@string/content_desc_background_image" />
 
     <TextView
         android:id="@+id/title"
@@ -13,16 +15,15 @@
 
     <TextView
         android:id="@+id/subtitle"
-        style="@style/AuthSubtitle" 
-        />
+        style="@style/AuthSubtitle" />
 
     <LinearLayout
         android:id="@+id/layoutHolder"
         android:layout_width="wrap_content"
-        android:orientation="vertical"
         android:layout_height="wrap_content"
         android:layout_below="@id/subtitle"
-        android:layout_centerHorizontal="true" >
+        android:layout_centerHorizontal="true"
+        android:orientation="vertical" >
 
         <LinearLayout
             android:id="@+id/editTextLayout"
@@ -45,7 +46,7 @@
         <Button
             android:id="@+id/loginButton"
             style="@style/AuthButton"
-            android:layout_below="@+id/editTextLayout"
+  
             android:text="@string/login_button_label" />
     </LinearLayout>
 

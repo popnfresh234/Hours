@@ -38,6 +38,7 @@
     <string name="nav_drawer_home">Home</string>
     <string name="nav_drawer_my_restaurants">My Restaurants</string>
     <string name="nav_drawer_recently_updated">Recently Updated</string>
+    <string name="nav_drawer_my_favorites">Favorites</string>
     <string name="new_restaurant">New Restaurant</string>
     <string name="password_hint">Password</string>
     <string name="picture_button_label">New Picture</string>
@@ -78,5 +79,13 @@
         <item>Take Picture</item>
         <item>Choose Picture</item>
     </string-array>
+        <string name="recover_password_button_label">Recover Password</string>
+        <string name="recover_password_subtitle">Enter your e-mail address</string>
+        <string name="title_activity_password_recovery">Password Recovery</string>
+        <string name="password_recovery_e_mail_sent">Password recovery e-mail sent!</string>
+        <string name="invalid_e_mail">Invalid e-mail address</string>
+        <string name="e_mail_not_found">E-mail address not found</string>
+        <string name="menu_quit_label">Quit</string>
+        <string name="recover_password_text">Forgot your password?</string>
 
 </resources>
