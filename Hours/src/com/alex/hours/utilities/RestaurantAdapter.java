@@ -63,6 +63,7 @@ public class RestaurantAdapter extends ArrayAdapter<Restaurant> {
 		TextView saturday = (TextView) convertView
 				.findViewById(R.id.restaurant_list_saturday);
 
+		//Set stars if restaurant is in the favorites list
 		ImageView favoriteImage = (ImageView) convertView.findViewById(R.id.favourite_image);
 		favoriteImage.setBackgroundResource(R.drawable.ic_rating_not_important);
 		for(Restaurant r : mFavorites){
@@ -70,23 +71,6 @@ public class RestaurantAdapter extends ArrayAdapter<Restaurant> {
 				favoriteImage.setBackgroundResource(R.drawable.ic_rating_important);
 			}
 		}
-//		ParseUser user = ParseUser.getCurrentUser();
-//		ParseRelation<Restaurant> relation = user.getRelation(ParseConstants.RELATION_FAVORITE);
-//		ParseQuery <Restaurant> query = relation.getQuery();
-//		query.whereEqualTo("objectId", mRestaurant.getObjectId());
-//		
-//		query.findInBackground(new FindCallback<Restaurant>() {
-//			
-//			@Override
-//			public void done(List<Restaurant> favorites, ParseException e) {
-//				// TODO Auto-generated method stub
-//				if(favorites.size()>0){
-//					
-//					favoriteImage.setBackgroundResource(R.drawable.ic_rating_important);
-//				}
-//				
-//			}
-//		});
 		
 		// Set text to red if not open
 		if (mRestaurant.getSunday() == false) {

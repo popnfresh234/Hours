@@ -85,11 +85,11 @@ public class RestaurantListFragment extends ListFragment {
 	private Restaurant mRestaurant;
 	private ParseRelation<Restaurant> mCurrentUserRelation;
 	private Menu mActionBarMenu;
-	private Boolean mHidden = false;
 
 	@Override
 	public void onPause() {
 		super.onPause();
+		// If for some reason the progress bar is on, shut it off
 		getActivity().setProgressBarIndeterminateVisibility(false);
 	}
 
@@ -100,39 +100,8 @@ public class RestaurantListFragment extends ListFragment {
 		// Moved to onResume so that list updates after adding new restaurant
 		// turn on progress indicator when fragment is created
 		getActivity().setProgressBarIndeterminateVisibility(true);
-		// If no argument is passed, show all restaurants
-		if (getArguments() == null) {
-			queryParse(1, null, null);
-		}
-		// If an argument is passed, check its query code and query accordingly
-		if (getArguments() != null) {
-			String queryCode = (String) getArguments().get(QUERY_CODE);
-			if (queryCode.equals(MY_RESTAURATNS)) {
-				mQueryCode = MY_RESTAURANT_QUERY_CODE;
-				queryParse(1, null, null);
-			}
-			if (queryCode.equals(ALL_RESTAURATNS)) {
-				mQueryCode = ALL_RESTAURANT_QUERY_CODE;
-				queryParse(1, null, null);
-			}
-			if (queryCode.equals(SEARCH)) {
-				mQueryCode = SEARCH_QUERY_CODE;
-				String query = getArguments().getString(QUERY);
-				queryParse(1, null, query);
-			}
-			if (queryCode.equals(RECENT_RESTAURANTS_ONE_DAY)
-					|| queryCode.equals(RECENT_RESTAURANTS_ONE_WEEK)
-					|| queryCode.equals(RECENT_UPDATE)) {
-				mQueryCode = DATE_QUERY_CODE;
-				int dateIncrement = getArguments().getInt(DATE_INCREMENT);
-				String criteria = getArguments().getString(CRITERIA);
-				queryParse(dateIncrement, criteria, null);
-			}
-			if (queryCode.equals(FAVORITES)) {
-				mQueryCode = FAVORITES_QUERY_CODE;
-				queryParse(1, null, null);
-			}
-		}
+		updateListView();
+
 	}
 
 	@Override
@@ -175,7 +144,7 @@ public class RestaurantListFragment extends ListFragment {
 			mIsMobile = false;
 		}
 		if (!isWifi && !mIsMobile) {
-
+			// Display warning if no network connection
 			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 			builder.setMessage(R.string.connection_error)
 					.setTitle(R.string.connection_error_title)
@@ -208,6 +177,7 @@ public class RestaurantListFragment extends ListFragment {
 				startRestaurantActivity();
 			}
 		});
+		// If user is admin, set up admin context menu and listeners
 		if (mCurrentUser != null) {
 			if (mCurrentUserId.equals(ADMIN)
 					|| mCurrentUserId.equals("45LT0GnGVU")) {
@@ -320,10 +290,11 @@ public class RestaurantListFragment extends ListFragment {
 								MenuItem item) {
 							switch (item.getItemId()) {
 							case R.id.menu_item_favourite_restaurant:
-								Log.i("ckicjed", "clicked");
+
 								// get adapter
 								RestaurantAdapter adapter = (RestaurantAdapter) getListAdapter();
-								// go through items in adapter and delete if
+								// go through items in adapter and add to
+								// favorites if
 								// checked
 								for (int i = adapter.getCount() - 1; i >= 0; i--) {
 									if (getListView().isItemChecked(i)) {
@@ -353,10 +324,11 @@ public class RestaurantListFragment extends ListFragment {
 								mode.finish();
 								return true;
 							case R.id.menu_item_unfavourite_restaurant:
-								Log.i("ckicjed", "unfavorite");
+
 								// get adapter
 								RestaurantAdapter adapter1 = (RestaurantAdapter) getListAdapter();
-								// go through items in adapter and delete if
+								// go through items in adapter and remove from
+								// favorites
 								// checked
 								for (int i = adapter1.getCount() - 1; i >= 0; i--) {
 									if (getListView().isItemChecked(i)) {
@@ -416,8 +388,8 @@ public class RestaurantListFragment extends ListFragment {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getActivity().getMenuInflater().inflate(R.menu.restaurant_list, menu);
 
-		Log.i("Preparing Options", "Preparing Options");
-		super.onPrepareOptionsMenu(menu);
+//		Log.i("Preparing Options", "Preparing Options");
+//		super.onPrepareOptionsMenu(menu);
 		menu.clear();
 
 		inflater.inflate(R.menu.restaurant_list, menu);
@@ -426,13 +398,8 @@ public class RestaurantListFragment extends ListFragment {
 		// pressed when loading list
 		// Re-enabled after the list is loaded in query parse method
 		mActionBarMenu = menu;
-		// if (mHidden == false) {
-		// for (int i = 0; i < mActionBarMenu.size(); i++) {
-		// mActionBarMenu.getItem(i).setEnabled(false);
-		// }
-		menu.findItem(R.id.menu_item_new_restaurant).setEnabled(false);
-		mHidden = true;
-		// }
+		mActionBarMenu.findItem(R.id.menu_item_new_restaurant).setEnabled(false);
+
 
 		// Get search view
 		SearchManager searchManager = (SearchManager) getActivity()
@@ -460,6 +427,7 @@ public class RestaurantListFragment extends ListFragment {
 
 		searchView.setOnQueryTextListener(new OnQueryTextListener() {
 
+			//Query on text submitted
 			@Override
 			public boolean onQueryTextSubmit(String query) {
 				getActivity().setProgressBarIndeterminateVisibility(true);
@@ -467,10 +435,10 @@ public class RestaurantListFragment extends ListFragment {
 				queryParse(1, null, query);
 				return false;
 			}
-
+			
+			//Also query on text changed, immediate results
 			@Override
 			public boolean onQueryTextChange(String newText) {
-				// mActionBarSearchQuery = newText.toLowerCase();
 				mQueryCode = SEARCH_QUERY_CODE;
 				queryParse(1, null, newText.toLowerCase());
 				return false;
@@ -490,28 +458,20 @@ public class RestaurantListFragment extends ListFragment {
 
 	}
 
+	
+	
 	// Responses to options menu in action bar
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int itemId = item.getItemId();
 
 		switch (itemId) {
+		case R.id.menu_item_new_restaurant:
+			startRestaurantActivity();
+			break;
 		case R.id.action_logout:
 			ParseUser.logOut();
 			navigateToLogin();
-			break;
-		// case R.id.action_my_restaurants:
-		// getActivity().setProgressBarIndeterminateVisibility(true);
-		// mQueryCode = MY_RESTAURANT_QUERY_CODE;
-		// queryParse(1, null, null);
-		// break;
-		// case R.id.action_all_restaurants:
-		// getActivity().setProgressBarIndeterminateVisibility(true);
-		// mQueryCode = ALL_RESTAURANT_QUERY_CODE;
-		// queryParse(1, null, null);
-		// break;
-		case R.id.menu_item_new_restaurant:
-			startRestaurantActivity();
 			break;
 		case R.id.action_quit:
 			getActivity().finish();
@@ -523,6 +483,8 @@ public class RestaurantListFragment extends ListFragment {
 
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
+		// Get restaurant from pressed list item, create fragment with
+		// restaurants ID
 		Restaurant r = ((RestaurantAdapter) getListAdapter()).getItem(position);
 		Bundle args = new Bundle();
 		if (getArguments() != null) {
@@ -627,18 +589,10 @@ public class RestaurantListFragment extends ListFragment {
 								@Override
 								public void done(List<Restaurant> favorites,
 										ParseException e) {
-									// for (int i = 0; i <
-									// mActionBarMenu.size(); i++) {
-									// //TODO
-									// //Actionbar items re-enabled here
-									// mActionBarMenu.getItem(i).setEnabled(
-									// true);
+									// Re-enable actionbar items
 									mActionBarMenu.findItem(
 											R.id.menu_item_new_restaurant)
 											.setEnabled(true);
-									mHidden = false;
-
-									// }
 
 									mQueryCode = CLEAR_QUERY_CODE;
 									if (getActivity() != null) {
@@ -654,15 +608,6 @@ public class RestaurantListFragment extends ListFragment {
 
 									if (e == null) {
 										// We found restaurants!
-
-										String[] titles = new String[mRestaurants
-												.size()];
-										int i = 0;
-										for (Restaurant restaurant : mRestaurants) {
-											titles[i] = restaurant
-													.getString(ParseConstants.KEY_RESTAURANT_TITLE);
-											i++;
-										}
 										if (getActivity() != null) {
 											// if (getListView().getAdapter() ==
 											// null) {
