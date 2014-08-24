@@ -388,8 +388,8 @@ public class RestaurantListFragment extends ListFragment {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getActivity().getMenuInflater().inflate(R.menu.restaurant_list, menu);
 
-//		Log.i("Preparing Options", "Preparing Options");
-//		super.onPrepareOptionsMenu(menu);
+		// Log.i("Preparing Options", "Preparing Options");
+		// super.onPrepareOptionsMenu(menu);
 		menu.clear();
 
 		inflater.inflate(R.menu.restaurant_list, menu);
@@ -398,8 +398,8 @@ public class RestaurantListFragment extends ListFragment {
 		// pressed when loading list
 		// Re-enabled after the list is loaded in query parse method
 		mActionBarMenu = menu;
-		mActionBarMenu.findItem(R.id.menu_item_new_restaurant).setEnabled(false);
-
+		mActionBarMenu.findItem(R.id.menu_item_new_restaurant)
+				.setEnabled(false);
 
 		// Get search view
 		SearchManager searchManager = (SearchManager) getActivity()
@@ -427,7 +427,7 @@ public class RestaurantListFragment extends ListFragment {
 
 		searchView.setOnQueryTextListener(new OnQueryTextListener() {
 
-			//Query on text submitted
+			// Query on text submitted
 			@Override
 			public boolean onQueryTextSubmit(String query) {
 				getActivity().setProgressBarIndeterminateVisibility(true);
@@ -435,8 +435,8 @@ public class RestaurantListFragment extends ListFragment {
 				queryParse(1, null, query);
 				return false;
 			}
-			
-			//Also query on text changed, immediate results
+
+			// Also query on text changed, immediate results
 			@Override
 			public boolean onQueryTextChange(String newText) {
 				mQueryCode = SEARCH_QUERY_CODE;
@@ -458,8 +458,6 @@ public class RestaurantListFragment extends ListFragment {
 
 	}
 
-	
-	
 	// Responses to options menu in action bar
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -590,9 +588,11 @@ public class RestaurantListFragment extends ListFragment {
 								public void done(List<Restaurant> favorites,
 										ParseException e) {
 									// Re-enable actionbar items
-									mActionBarMenu.findItem(
-											R.id.menu_item_new_restaurant)
-											.setEnabled(true);
+									if (mActionBarMenu.findItem(R.id.menu_item_new_restaurant) != null) {
+										mActionBarMenu.findItem(
+												R.id.menu_item_new_restaurant)
+												.setEnabled(true);
+									}
 
 									mQueryCode = CLEAR_QUERY_CODE;
 									if (getActivity() != null) {
@@ -609,19 +609,11 @@ public class RestaurantListFragment extends ListFragment {
 									if (e == null) {
 										// We found restaurants!
 										if (getActivity() != null) {
-											// if (getListView().getAdapter() ==
-											// null) {
+							
 											RestaurantAdapter adapter = new RestaurantAdapter(
-													getListView().getContext(),
+													getActivity().getBaseContext(),
 													mRestaurants, favorites);
 											setListAdapter(adapter);
-											// } else {
-											// // refill the adapter!
-											// ((RestaurantAdapter)
-											// getListView()
-											// .getAdapter())
-											// .refill(mRestaurants);
-											// }
 
 										}
 									} else {

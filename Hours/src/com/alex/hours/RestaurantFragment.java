@@ -255,9 +255,9 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		//If user pressed OK from either take or chooe photo request
+		// If user pressed OK from either take or chooe photo request
 		if (resultCode == getActivity().RESULT_OK) {
-			//If choosing a photo, get it's URI from the data
+			// If choosing a photo, get it's URI from the data
 			if (requestCode == PICK_PHOTO_REQUEST) {
 				if (data == null) {
 					Log.i("DATA", "DATA ERROR");
@@ -265,7 +265,7 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 					mMediaUri = data.getData();
 				}
 			}
-			//If taking a photo,do something funky with media scanner
+			// If taking a photo,do something funky with media scanner
 			if (requestCode == TAKE_PHOTO_REQUEST) {
 				Intent mediaScanIntent = new Intent(
 						Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
@@ -356,7 +356,7 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 		}
 	}
 
-	//Handle clicks on the various buttons in the fragment
+	// Handle clicks on the various buttons in the fragment
 	public void onClick(View v) {
 		int id = v.getId();
 		switch (id) {
@@ -1203,9 +1203,12 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 													.equals("45LT0GnGVU")) {
 										// if (currentUser.equals("e7So6F4ytk")
 										// == false) {
-										Toast.makeText(getActivity(),
-												R.string.edit_error_message,
-												Toast.LENGTH_LONG).show();
+										if (getActivity() != null) {
+											Toast.makeText(
+													getActivity(),
+													R.string.edit_error_message,
+													Toast.LENGTH_LONG).show();
+										}
 										mSaveButton.setEnabled(false);
 										mTakePictureButton.setEnabled(false);
 										// }
