@@ -151,7 +151,7 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 				getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
 			}
 		}
-
+		Log.i("OnCreateView", "called");
 		// Setup fields
 		mTitleField = (EditText) v.findViewById(R.id.restaurant_title);
 		mTitleField.setOnFocusChangeListener(this);
@@ -1334,6 +1334,33 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 			return true;
 		} else {
 			return false;
+		}
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		if (mMediaUri != null) {
+			outState.putString("cameraImageUri", mMediaUri.toString());
+			if (mRestaurant != null) {
+				outState.putString("restaurant", mRestaurant.getObjectId());
+			}
+		}
+	}
+
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onActivityCreated(savedInstanceState);
+		if (savedInstanceState != null) {
+			if (savedInstanceState.containsKey("cameraImageUri")) {
+				mMediaUri = Uri.parse(savedInstanceState
+						.getString("cameraImageUri"));
+			}
+			if (savedInstanceState.containsKey("restaurant")) {
+				//TODO fix rotation issue
+			}
+
 		}
 	}
 }

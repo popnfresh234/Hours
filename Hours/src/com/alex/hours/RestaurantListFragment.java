@@ -84,7 +84,7 @@ public class RestaurantListFragment extends ListFragment {
 	private boolean mIsMobile;
 	private Restaurant mRestaurant;
 	private ParseRelation<Restaurant> mCurrentUserRelation;
-	private Menu mActionBarMenu;
+
 
 	@Override
 	public void onPause() {
@@ -397,9 +397,7 @@ public class RestaurantListFragment extends ListFragment {
 		// Get a reference to the menu and disable buttons so they can't be
 		// pressed when loading list
 		// Re-enabled after the list is loaded in query parse method
-		mActionBarMenu = menu;
-		mActionBarMenu.findItem(R.id.menu_item_new_restaurant)
-				.setEnabled(false);
+
 
 		// Get search view
 		SearchManager searchManager = (SearchManager) getActivity()
@@ -587,12 +585,6 @@ public class RestaurantListFragment extends ListFragment {
 								@Override
 								public void done(List<Restaurant> favorites,
 										ParseException e) {
-									// Re-enable actionbar items
-									if (mActionBarMenu.findItem(R.id.menu_item_new_restaurant) != null) {
-										mActionBarMenu.findItem(
-												R.id.menu_item_new_restaurant)
-												.setEnabled(true);
-									}
 
 									mQueryCode = CLEAR_QUERY_CODE;
 									if (getActivity() != null) {
@@ -611,7 +603,7 @@ public class RestaurantListFragment extends ListFragment {
 										if (getActivity() != null) {
 							
 											RestaurantAdapter adapter = new RestaurantAdapter(
-													getActivity().getBaseContext(),
+													getActivity(),
 													mRestaurants, favorites);
 											setListAdapter(adapter);
 

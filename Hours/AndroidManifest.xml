@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.alex.hours"
-    android:versionCode="8"
-    android:versionName="2.2.2" >
+    android:versionCode="9"
+    android:versionName="2.2.3" >
 
     <uses-sdk
         android:minSdkVersion="14"
@@ -32,7 +32,8 @@
             android:label="@string/title_activity_sign_up"
             android:parentActivityName="com.alex.hours.LoginActivity" >
         </activity>
-        <activity android:name="com.alex.hours.MainActivity" >
+        <activity android:name="com.alex.hours.MainActivity"
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
