@@ -102,6 +102,11 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 	private Button mSaveButton;
 	private Button mCancelButton;
 
+	private int mResultCode;
+	private int mRequestCode;
+	private Intent mData;
+	private boolean mFromCamera = false;
+
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);
@@ -245,9 +250,22 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 
 		// Method includes check to see if we're editing a restaurant or
 		// creating a new one, only loads fields if we're editing
-		loadRestaurant();
+
 		return v;
 
+	}
+
+	@Override
+	public void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		Log.i("onResume", "called");
+
+		// Load restaurant information if we didn't come from camera intent
+		if (!mFromCamera) {
+			Log.i("OnResuemLoad", "loading Rest");
+			loadRestaurant();
+		}
 	}
 
 	// Handle Results from Camera
@@ -256,29 +274,131 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		// If user pressed OK from either take or chooe photo request
-		if (resultCode == getActivity().RESULT_OK) {
-			// If choosing a photo, get it's URI from the data
-			if (requestCode == PICK_PHOTO_REQUEST) {
-				if (data == null) {
-					Log.i("DATA", "DATA ERROR");
-				} else {
-					mMediaUri = data.getData();
+		Log.i("onResults", "onResults");
+		mFromCamera = true;
+		mResultCode = resultCode;
+		mRequestCode = requestCode;
+		mData = data;
+
+		// Load restaurant with new picture
+		// Activity results must be carried out within parseobjects save
+		// callback or it will create a new restaurant
+		// becausethe data hasn't been loaded yet so mRestaurant == null
+		if (getArguments() != null) {
+			if (getArguments().getString(EXTRA_RESTAURANT_ID) != null) {
+				String restaurantId = (String) getArguments().getString(
+						EXTRA_RESTAURANT_ID);
+				// Fetch restaurant based on ID
+				// Disable buttons so user can't save or take a picture in the
+				// middle of fetching the restaurant
+				mSaveButton.setEnabled(false);
+				mCancelButton.setEnabled(false);
+				mTakePictureButton.setEnabled(false);
+				getActivity().setProgressBarIndeterminateVisibility(true);
+				// query parse for the restaurant based on the ID passed in
+				ParseQuery<Restaurant> query = ParseQuery
+						.getQuery("Restaurant");
+				query.getInBackground(restaurantId,
+						new GetCallback<Restaurant>() {
+							public void done(Restaurant restaurant,
+									ParseException e) {
+								if (e == null) {
+									// Re-enable buttons
+
+									mRestaurant = restaurant;
+									if (mRestaurant != null) {
+										Log.i("Restaurant",
+												mRestaurant.toString());
+									}
+									mSaveButton.setEnabled(true);
+									mCancelButton.setEnabled(true);
+									mTakePictureButton.setEnabled(true);
+									// If restaurant contains no image, turn off
+									// progress
+									// bar here, otherwise turn off when image
+									// is done
+									// loading in loadFields
+									if (mRestaurant.getImage() == null) {
+										if (getActivity() != null) {
+											getActivity()
+													.setProgressBarIndeterminateVisibility(
+															false);
+										}
+									}
+
+									// set fields to restaurant object data
+									loadFields();
+
+									// Deal with results from camera
+									if (mResultCode == getActivity().RESULT_OK) {
+										// If choosing a photo, get it's URI
+										// from the data
+										if (mRequestCode == PICK_PHOTO_REQUEST) {
+											if (mData == null) {
+												Log.i("DATA", "DATA ERROR");
+											} else {
+												mMediaUri = mData.getData();
+											}
+										}
+										// If taking a photo,do something funky
+										// with media scanner
+										if (mRequestCode == TAKE_PHOTO_REQUEST) {
+											Intent mediaScanIntent = new Intent(
+													Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+											mediaScanIntent.setData(mMediaUri);
+											getActivity().sendBroadcast(
+													mediaScanIntent);
+										}
+										// TODO fix this
+										resizeImageForUpload();
+
+									}
+
+									else if (mResultCode != getActivity().RESULT_CANCELED) {
+										Toast.makeText(getActivity(), "Error",
+												Toast.LENGTH_LONG).show();
+									}
+								} else {
+									AlertDialog.Builder builder = new AlertDialog.Builder(
+											getActivity());
+									builder.setMessage(e.getMessage())
+											.setTitle(
+													R.string.general_error_title)
+											.setPositiveButton(
+													android.R.string.ok, null);
+									AlertDialog dialog = builder.create();
+									dialog.show();
+
+								}
+							}
+						});
+			} 
+			//Creating a new restaurant
+			else {
+				if (resultCode == getActivity().RESULT_OK) {
+					// If choosing a photo, get it's URI
+					// from the data
+					if (requestCode == PICK_PHOTO_REQUEST) {
+						if (data == null) {
+							Log.i("DATA", "DATA ERROR");
+						} else {
+							mMediaUri = data.getData();
+						}
+					}
+					// If taking a photo,do something funky
+					// with media scanner
+					if (requestCode == TAKE_PHOTO_REQUEST) {
+						Intent mediaScanIntent = new Intent(
+								Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+						mediaScanIntent.setData(mMediaUri);
+						getActivity().sendBroadcast(mediaScanIntent);
+					}
+					// TODO fix this
+					resizeImageForUpload();
 				}
 			}
-			// If taking a photo,do something funky with media scanner
-			if (requestCode == TAKE_PHOTO_REQUEST) {
-				Intent mediaScanIntent = new Intent(
-						Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-				mediaScanIntent.setData(mMediaUri);
-				getActivity().sendBroadcast(mediaScanIntent);
-			}
-			resizeImageForUpload();
-
 		}
 
-		else if (resultCode != getActivity().RESULT_CANCELED) {
-			Toast.makeText(getActivity(), "Error", Toast.LENGTH_LONG).show();
-		}
 	}
 
 	protected void resizeImageForUpload() {
@@ -321,7 +441,7 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 					}
 				});
 			} else {
-
+				Log.i("Creating New Restaurant", "damn");
 				// If the restaurant doesn't exist, create a new one and set
 				// upload the chosen or taken image
 
@@ -800,7 +920,6 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 				else {
 
 					mCancelButton.setEnabled(true);
-					// TODO display alert
 					AlertDialog.Builder builder = new AlertDialog.Builder(
 							getActivity());
 					builder.setMessage(R.string.edit_error_message)
@@ -1172,7 +1291,12 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 									ParseException e) {
 								if (e == null) {
 									// Re-enable buttons
+
 									mRestaurant = restaurant;
+									if (mRestaurant != null) {
+										Log.i("Restaurant",
+												mRestaurant.toString());
+									}
 									mSaveButton.setEnabled(true);
 									mCancelButton.setEnabled(true);
 									mTakePictureButton.setEnabled(true);
@@ -1358,7 +1482,7 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 						.getString("cameraImageUri"));
 			}
 			if (savedInstanceState.containsKey("restaurant")) {
-				//TODO fix rotation issue
+				// TODO fix rotation issue
 			}
 
 		}

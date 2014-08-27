@@ -37,7 +37,7 @@ public class MainActivity extends FragmentActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		Log.i("onResume", "called");
+
 		FrameLayout frameLayout = (FrameLayout) findViewById(R.id.content_frame);
 		if (((ViewGroup.MarginLayoutParams) frameLayout.getLayoutParams()).leftMargin == (int) getResources()
 				.getDimension(R.dimen.drawer_size)) {
