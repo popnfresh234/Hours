@@ -60,7 +60,7 @@ public class MainActivity extends FragmentActivity {
 		setContentView(R.layout.activity_main);
 
 		// Create drawer items for the custom adapter
-		ObjectDrawerItem[] drawerItem = new ObjectDrawerItem[7];
+		ObjectDrawerItem[] drawerItem = new ObjectDrawerItem[8];
 
 		drawerItem[0] = new ObjectDrawerItem(R.drawable.ic_av_home,
 				getString(R.string.nav_drawer_home));
@@ -76,7 +76,8 @@ public class MainActivity extends FragmentActivity {
 				getString(R.string.nav_drawer_added_this_week));
 		drawerItem[6] = new ObjectDrawerItem(R.drawable.ic_updated,
 				getString(R.string.nav_drawer_recently_updated));
-		
+		drawerItem[7] = new ObjectDrawerItem(R.drawable.ic_city,
+				getString(R.string.nav_drawer_city));
 
 		// mTitle = mDrawerTitle = getTitle();
 		// mTitles = getResources().getStringArray(R.array.titles_array);
@@ -115,14 +116,14 @@ public class MainActivity extends FragmentActivity {
 		) {
 			public void onDrawerClosed(View view) {
 				getActionBar().setTitle(mTitle);
-				//invalidateOptionsMenu(); // creates call to
-											// onPrepareOptionsMenu()
+				// invalidateOptionsMenu(); // creates call to
+				// onPrepareOptionsMenu()
 			}
 
 			public void onDrawerOpened(View drawerView) {
 				getActionBar().setTitle(mDrawerTitle);
-				//invalidateOptionsMenu(); // creates call to
-											// onPrepareOptionsMenu()
+				// invalidateOptionsMenu(); // creates call to
+				// onPrepareOptionsMenu()
 			}
 		};
 		if (!mIsDrawerLocked) {
@@ -167,7 +168,7 @@ public class MainActivity extends FragmentActivity {
 	}
 
 	private void selectItem(int position) {
-		Log.i("Item selected", "item" +position);
+		Log.i("Item selected", "item" + position);
 		// update the main content by replacing fragments
 		FragmentManager fragmentManager;
 		Bundle args = new Bundle();
@@ -192,7 +193,7 @@ public class MainActivity extends FragmentActivity {
 					.addToBackStack(null).commit();
 			break;
 		case 2:
-			
+
 			args.putString(RestaurantListFragment.QUERY_CODE,
 					RestaurantListFragment.ALL_RESTAURATNS);
 			RestaurantListFragment allRestaurants = new RestaurantListFragment();
@@ -263,7 +264,18 @@ public class MainActivity extends FragmentActivity {
 					.replace(R.id.content_frame, recentUpdate)
 					.addToBackStack(null).commit();
 			break;
-		
+
+		case 7:
+
+			
+			CityFragment cityFragment = new CityFragment();
+			fragmentManager = getSupportFragmentManager();
+			fragmentManager.popBackStack();
+			fragmentManager.beginTransaction()
+					.replace(R.id.content_frame, cityFragment)
+					.addToBackStack(null).commit();
+			break;
+
 		}
 
 		// update selected item and title, then close the drawer

@@ -71,6 +71,7 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 	// Declare views
 	private EditText mTitleField;
 	private EditText mAddressField;
+	private EditText mCityField;
 	private EditText mPhoneField;
 	private ImageButton mPhoneButton;
 	private CheckBox mSunday;
@@ -163,6 +164,9 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 
 		mAddressField = (EditText) v.findViewById(R.id.restaurant_address);
 		mAddressField.setOnFocusChangeListener(this);
+
+		mCityField = (EditText) v.findViewById(R.id.restaurant_city);
+		mCityField.setOnFocusChangeListener(this);
 
 		mPhoneField = (EditText) v.findViewById(R.id.restaurant_phone);
 		mPhoneButton = (ImageButton) v.findViewById(R.id.phone_button);
@@ -372,8 +376,8 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 								}
 							}
 						});
-			} 
-			//Creating a new restaurant
+			}
+			// Creating a new restaurant
 			else {
 				if (resultCode == getActivity().RESULT_OK) {
 					// If choosing a photo, get it's URI
@@ -1044,6 +1048,16 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 			}
 			break;
 
+		case R.id.restaurant_city:
+			if (hasFocus) {
+				mCityField.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+						android.R.drawable.ic_menu_edit, 0);
+			} else {
+				mCityField.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0,
+						0);
+			}
+			break;
+
 		case R.id.restaurant_notes:
 			if (hasFocus) {
 				mNotesField.setCompoundDrawablesWithIntrinsicBounds(0, 0,
@@ -1071,6 +1085,10 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 
 		restaurant.setAddress(mAddressField.getText().toString());
 		restaurant.setLowerCaseAddress(mAddressField.getText().toString()
+				.toLowerCase());
+
+		restaurant.setCity(mCityField.getText().toString());
+		restaurant.setLowerCaseCity(mCityField.getText().toString()
 				.toLowerCase());
 
 		restaurant.setPhone(PhoneNumberUtils.formatNumber(mPhoneField.getText()
@@ -1124,6 +1142,9 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 
 		mAddressField.setText(mRestaurant.getAddress());
 		mAddressField.clearFocus();
+
+		mCityField.setText(mRestaurant.getCity());
+		mCityField.clearFocus();
 
 		mPhoneField.setText(mRestaurant.getPhone());
 		mPhoneField.clearFocus();
@@ -1196,6 +1217,10 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 
 		mRestaurant.setAddress(mAddressField.getText().toString());
 		mRestaurant.setLowerCaseAddress(mAddressField.getText().toString()
+				.toLowerCase());
+
+		mRestaurant.setCity(mCityField.getText().toString());
+		mRestaurant.setLowerCaseCity(mCityField.getText().toString()
 				.toLowerCase());
 
 		mRestaurant.setPhone(PhoneNumberUtils.formatNumber(mPhoneField

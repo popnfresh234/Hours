@@ -39,6 +39,7 @@
     <string name="nav_drawer_my_restaurants">My Restaurants</string>
     <string name="nav_drawer_recently_updated">Recently Updated</string>
     <string name="nav_drawer_my_favorites">Favorites</string>
+    <string name="nav_drawer_city">View by City</string>
     <string name="new_restaurant">New Restaurant</string>
     <string name="password_hint">Password</string>
     <string name="picture_button_label">New Picture</string>
@@ -87,5 +88,10 @@
         <string name="e_mail_not_found">E-mail address not found</string>
         <string name="menu_quit_label">Quit</string>
         <string name="recover_password_text">Forgot your password?</string>
+        <string name="city_button_vancouver">Vancouver</string>
+        <string name="city_button_taipei">Taipei</string>
+        <string name="edit_text_hint_city">Enter City Name</string>
+        <string name="restaurant_city_label">City</string>
+        <string name="restaurant_city_hint">Enter City</string>
 
 </resources>

@@ -30,6 +30,15 @@
             android:id="@+id/restaurant_address"
             style="@style/restaurantEditText"
             android:hint="@string/restaurant_address_hint" />
+        
+        <TextView
+            style="@style/restaurantTextView"
+            android:text="@string/restaurant_city_label" />
+
+        <EditText
+            android:id="@+id/restaurant_city"
+            style="@style/restaurantEditText"
+            android:hint="@string/restaurant_city_hint" />
 
         <TextView
             style="@style/restaurantTextView"

@@ -545,10 +545,16 @@ public class RestaurantListFragment extends ListFragment {
 						"Restaurant");
 				queryAddress.whereContains(
 						ParseConstants.KEY_ADDRESS_LOWER_CASE, search);
+				
+				ParseQuery<Restaurant> queryCity = new ParseQuery<Restaurant>(
+						"Restaurant");
+				queryCity.whereContains(
+						ParseConstants.KEY_CITY_LOWERCASE, search);
 
 				List<ParseQuery<Restaurant>> queries = new ArrayList<ParseQuery<Restaurant>>();
 				queries.add(queryTitle);
 				queries.add(queryAddress);
+				queries.add(queryCity);
 
 				query = ParseQuery.or(queries);
 				query.addAscendingOrder(ParseConstants.KEY_RESTAURANT_LOWERCASE_TITLE);

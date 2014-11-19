@@ -13,6 +13,10 @@ public final class ParseConstants {
 	public static final String KEY_FILE = "file";
 	public static final String TYPE_IMAGE = "image";
 	
+	//Key for city data
+	public static final String KEY_CITY = "city";
+	public static final String KEY_CITY_LOWERCASE = "lowercaseCity";
+	
 	// Field names
 	public static final String KEY_USERNAME = "username";
 	public static final String KEY_FRIENDS_RELATION = "friendsRelation";
