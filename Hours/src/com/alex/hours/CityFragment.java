@@ -1,54 +1,39 @@
 package com.alex.hours;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
+import android.widget.ListView;
 
-public class CityFragment extends Fragment implements OnClickListener {
+import com.alex.hours.utilities.CityAdapter;
+import com.alex.hours.utilities.ParseConstants;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
 
-	private Button mVancouverButton;
-	private Button mTaipeiButton;
-	private Button mCitySearchButton;
-	private EditText mCitySearchField;
+public class CityFragment extends ListFragment implements OnClickListener {
+
+	private List<Restaurant> mRestaurants;
+	private List<String> mUniqueCities;
+	private ListView mListView;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		View v = inflater.inflate(R.layout.fragment_city, container, false);
+		View v = inflater
+				.inflate(R.layout.fragment_city_list, container, false);
 
-		mVancouverButton = (Button) v.findViewById(R.id.city_button_vancouver);
-		mVancouverButton.setOnClickListener(this);
+		mListView = (ListView) v.findViewById(android.R.id.list);
 
-		mTaipeiButton = (Button) v.findViewById(R.id.city_button_taipei);
-		mTaipeiButton.setOnClickListener(this);
-		
-		mCitySearchField = (EditText)v.findViewById(R.id.city_search_field);
-
-		mCitySearchButton = (Button) v.findViewById(R.id.city_button_search);
-		mCitySearchButton.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				String searchQuery = mCitySearchField.getText().toString()
-						.toLowerCase();
-				Bundle args = new Bundle();
-				args.putString(RestaurantListFragment.QUERY_CODE,
-						RestaurantListFragment.SEARCH);
-				args.putString(RestaurantListFragment.QUERY, searchQuery);
-				RestaurantListFragment myRestaurants = new RestaurantListFragment();
-				myRestaurants.setArguments(args);
-				FragmentManager fragmentManager = getFragmentManager();
-				fragmentManager.beginTransaction()
-						.replace(R.id.content_frame, myRestaurants).addToBackStack(null).commit();
-
-			}
-		});
+		queryParse();
 
 		return v;
 	}
@@ -70,7 +55,8 @@ public class CityFragment extends Fragment implements OnClickListener {
 			myRestaurants.setArguments(args);
 			fragmentManager = getFragmentManager();
 			fragmentManager.beginTransaction()
-					.replace(R.id.content_frame, myRestaurants).addToBackStack(null).commit();
+					.replace(R.id.content_frame, myRestaurants)
+					.addToBackStack(null).commit();
 
 			break;
 
@@ -83,10 +69,72 @@ public class CityFragment extends Fragment implements OnClickListener {
 			myRestaurants.setArguments(args);
 			fragmentManager = getFragmentManager();
 			fragmentManager.beginTransaction()
-					.replace(R.id.content_frame, myRestaurants).addToBackStack(null).commit();
+					.replace(R.id.content_frame, myRestaurants)
+					.addToBackStack(null).commit();
 			break;
 
 		}
 
+	}
+
+	private void queryParse() {
+		getActivity()
+		.setProgressBarIndeterminateVisibility(
+				true);
+		List<String> uniqueCities = new ArrayList<String>();
+		mUniqueCities = uniqueCities;
+		ParseQuery<Restaurant> query = new ParseQuery<Restaurant>("Restaurant");
+		query.whereExists(ParseConstants.KEY_CITY);
+		query.addAscendingOrder(ParseConstants.KEY_CITY);
+		query.findInBackground(new FindCallback<Restaurant>() {
+
+			@Override
+			public void done(List<Restaurant> restaurants, ParseException e) {
+				mRestaurants = restaurants;
+				for (int i = 0; i < mRestaurants.size(); i++) {
+					Restaurant restaurant = (Restaurant) mRestaurants.get(i);
+					String cityName = restaurant.getCity();
+					if (mUniqueCities.size() > 0
+							&& mUniqueCities.contains(cityName)) {
+						Log.i("not unique", "contained");
+					} else {
+						mUniqueCities.add(cityName);
+					}
+				}
+
+				//Set Custom Adapter
+				CityAdapter adapter = new CityAdapter(getActivity(),
+						mUniqueCities);
+				mListView.setAdapter(adapter);
+				getActivity()
+				.setProgressBarIndeterminateVisibility(
+						false);
+			}
+		});
+
+	}
+	
+	@Override
+	public void onListItemClick(ListView l, View v, int position, long id) {
+		super.onListItemClick(l, v, position, id);
+		
+		FragmentManager fragmentManager;
+		String searchQuery;
+		Bundle args = new Bundle();
+		RestaurantListFragment myRestaurants = new RestaurantListFragment();
+		
+		//Get the name of the city from the listview
+		searchQuery = l.getItemAtPosition(position).toString().toLowerCase();
+		
+		//put name into bundle and send to restaurant list fragment for parse query
+		args.putString(RestaurantListFragment.QUERY_CODE,
+				RestaurantListFragment.SEARCH);
+		args.putString(RestaurantListFragment.QUERY, searchQuery);
+
+		myRestaurants.setArguments(args);
+		fragmentManager = getFragmentManager();
+		fragmentManager.beginTransaction()
+				.replace(R.id.content_frame, myRestaurants)
+				.addToBackStack(null).commit();
 	}
 }

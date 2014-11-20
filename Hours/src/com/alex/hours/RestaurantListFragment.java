@@ -572,6 +572,7 @@ public class RestaurantListFragment extends ListFragment {
 				query.whereExists(ParseConstants.KEY_RESTAURANT_TITLE);
 				query.addAscendingOrder(ParseConstants.KEY_RESTAURANT_LOWERCASE_TITLE);
 			}
+			
 			// execute query
 			query.findInBackground(new FindCallback<Restaurant>() {
 				@Override
