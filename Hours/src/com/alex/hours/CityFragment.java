@@ -6,6 +6,8 @@ import java.util.List;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ListFragment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,12 +26,20 @@ public class CityFragment extends ListFragment implements OnClickListener {
 	private List<Restaurant> mRestaurants;
 	private List<String> mUniqueCities;
 	private ListView mListView;
+	private SwipeRefreshLayout mSwipeRefreshLayout;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View v = inflater
 				.inflate(R.layout.fragment_city_list, container, false);
+
+		mSwipeRefreshLayout = (SwipeRefreshLayout) v
+				.findViewById(R.id.swipeRefreshLayout);
+		mSwipeRefreshLayout.setOnRefreshListener(mOnRefreshListener);
+		mSwipeRefreshLayout.setColorSchemeResources(R.color.swipeRefresh1,
+				R.color.swipeRefresh2, R.color.swipeRefresh3,
+				R.color.swipeRefresh4);
 
 		mListView = (ListView) v.findViewById(android.R.id.list);
 
@@ -78,9 +88,7 @@ public class CityFragment extends ListFragment implements OnClickListener {
 	}
 
 	private void queryParse() {
-		getActivity()
-		.setProgressBarIndeterminateVisibility(
-				true);
+		getActivity().setProgressBarIndeterminateVisibility(true);
 		List<String> uniqueCities = new ArrayList<String>();
 		mUniqueCities = uniqueCities;
 		ParseQuery<Restaurant> query = new ParseQuery<Restaurant>("Restaurant");
@@ -102,31 +110,33 @@ public class CityFragment extends ListFragment implements OnClickListener {
 					}
 				}
 
-				//Set Custom Adapter
+				// Set Custom Adapter
 				CityAdapter adapter = new CityAdapter(getActivity(),
 						mUniqueCities);
 				mListView.setAdapter(adapter);
-				getActivity()
-				.setProgressBarIndeterminateVisibility(
-						false);
+				getActivity().setProgressBarIndeterminateVisibility(false);
+				if (mSwipeRefreshLayout.isRefreshing()) {
+					mSwipeRefreshLayout.setRefreshing(false);
+				}
 			}
 		});
 
 	}
-	
+
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
-		
+
 		FragmentManager fragmentManager;
 		String searchQuery;
 		Bundle args = new Bundle();
 		RestaurantListFragment myRestaurants = new RestaurantListFragment();
-		
-		//Get the name of the city from the listview
+
+		// Get the name of the city from the listview
 		searchQuery = l.getItemAtPosition(position).toString().toLowerCase();
-		
-		//put name into bundle and send to restaurant list fragment for parse query
+
+		// put name into bundle and send to restaurant list fragment for parse
+		// query
 		args.putString(RestaurantListFragment.QUERY_CODE,
 				RestaurantListFragment.SEARCH);
 		args.putString(RestaurantListFragment.QUERY, searchQuery);
@@ -137,4 +147,13 @@ public class CityFragment extends ListFragment implements OnClickListener {
 				.replace(R.id.content_frame, myRestaurants)
 				.addToBackStack(null).commit();
 	}
+
+	protected OnRefreshListener mOnRefreshListener = new OnRefreshListener() {
+		@Override
+		public void onRefresh() {
+			queryParse();
+
+		}
+
+	};
 }

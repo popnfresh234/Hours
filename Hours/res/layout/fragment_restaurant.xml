@@ -26,11 +26,28 @@
             style="@style/restaurantTextView"
             android:text="@string/restaurant_address_label" />
 
-        <EditText
-            android:id="@+id/restaurant_address"
-            style="@style/restaurantEditText"
-            android:hint="@string/restaurant_address_hint" />
-        
+        <LinearLayout
+            style="?android:listSeparatorTextViewStyle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:paddingBottom="4dp" >
+
+            <EditText
+                android:id="@+id/restaurant_address"
+                style="@style/restaurantEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:hint="@string/restaurant_address_hint" />
+
+            <ImageButton
+                android:id="@+id/map_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/apptheme_map_button" />
+        </LinearLayout>
+
         <TextView
             style="@style/restaurantTextView"
             android:text="@string/restaurant_city_label" />
@@ -60,10 +77,10 @@
                 android:inputType="phone" />
 
             <ImageButton
-                android:id="@+id/phone_button"                
-                android:background="@drawable/apptheme_call_button"           
+                android:id="@+id/phone_button"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_width="wrap_content" />
+                android:background="@drawable/apptheme_call_button" />
         </LinearLayout>
 
         <TextView

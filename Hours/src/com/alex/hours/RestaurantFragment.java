@@ -4,7 +4,6 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.TimePickerDialog;
@@ -38,7 +37,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TimePicker;
 import android.widget.Toast;
-
 import com.alex.hours.utilities.FileHelper;
 import com.alex.hours.utilities.ParseConstants;
 import com.parse.GetCallback;
@@ -71,6 +69,7 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 	// Declare views
 	private EditText mTitleField;
 	private EditText mAddressField;
+	private ImageButton mMapButton;
 	private EditText mCityField;
 	private EditText mPhoneField;
 	private ImageButton mPhoneButton;
@@ -164,6 +163,8 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 
 		mAddressField = (EditText) v.findViewById(R.id.restaurant_address);
 		mAddressField.setOnFocusChangeListener(this);
+		mMapButton = (ImageButton) v.findViewById(R.id.map_button);
+		mMapButton.setOnClickListener(this);
 
 		mCityField = (EditText) v.findViewById(R.id.restaurant_city);
 		mCityField.setOnFocusChangeListener(this);
@@ -484,6 +485,18 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 	public void onClick(View v) {
 		int id = v.getId();
 		switch (id) {
+		
+		case R.id.map_button:
+			if(mAddressField.getText().toString().equals("")){
+				Toast.makeText(getActivity(), R.string.toast_no_address, Toast.LENGTH_SHORT).show();
+			}
+			else{
+			String address = mAddressField.getText().toString();
+			String map = "http://maps.google.com/maps?q="+ address;
+			Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(map));
+			startActivity(i);
+			}
+			break;
 
 		case R.id.phone_button:
 			Intent callIntent = new Intent(Intent.ACTION_CALL);
@@ -1087,9 +1100,9 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 		restaurant.setLowerCaseAddress(mAddressField.getText().toString()
 				.toLowerCase());
 
-		restaurant.setCity(mCityField.getText().toString());
+		restaurant.setCity(mCityField.getText().toString().trim());
 		restaurant.setLowerCaseCity(mCityField.getText().toString()
-				.toLowerCase());
+				.toLowerCase().trim());
 
 		restaurant.setPhone(PhoneNumberUtils.formatNumber(mPhoneField.getText()
 				.toString()));
@@ -1219,9 +1232,9 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 		mRestaurant.setLowerCaseAddress(mAddressField.getText().toString()
 				.toLowerCase());
 
-		mRestaurant.setCity(mCityField.getText().toString());
+		mRestaurant.setCity(mCityField.getText().toString().trim());
 		mRestaurant.setLowerCaseCity(mCityField.getText().toString()
-				.toLowerCase());
+				.toLowerCase().trim());
 
 		mRestaurant.setPhone(PhoneNumberUtils.formatNumber(mPhoneField
 				.getText().toString()));

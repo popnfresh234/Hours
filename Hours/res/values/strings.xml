@@ -93,5 +93,6 @@
         <string name="edit_text_hint_city">Enter City Name</string>
         <string name="restaurant_city_label">City</string>
         <string name="restaurant_city_hint">Enter City</string>
+        <string name="toast_no_address">No Address Information</string>
 
 </resources>
