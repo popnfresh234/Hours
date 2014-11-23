@@ -91,6 +91,7 @@ public class MainActivityFragment extends Fragment implements OnFocusChangeListe
 				RestaurantListFragment allRestaurants = new RestaurantListFragment();
 				allRestaurants.setArguments(args);
 				FragmentManager fragmentManager = getFragmentManager();
+				fragmentManager.popBackStack();
 				fragmentManager.beginTransaction()
 						.replace(R.id.content_frame, allRestaurants)
 						.addToBackStack(null).commit();

@@ -4,6 +4,7 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.TimePickerDialog;
@@ -37,6 +38,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
 import com.alex.hours.utilities.FileHelper;
 import com.alex.hours.utilities.ParseConstants;
 import com.parse.GetCallback;
@@ -54,6 +56,11 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 
 	public static final String NEW_RESTAURANT_FROM_LIST = "new_restaurant_from_list";
 	public static final String NEW_RESTAURANT_FROM_HOME = "new_restaurant_from_home";
+	public static final String NEW_RESTAURANT_FROM_MAP = "new_restaurant_from_map";
+	public static final String ADDRESS_FROM_MAP = "address_from_map";
+	public static final String CITY_FROM_MAP = "city_from_map";
+	public static final String NAME_FROM_MAP = "name_from_map";
+	public static final String MAP_CODE = "com.alex.hours.extra.map.code";
 	public static final String EXTRA_RESTAURANT_ID = "com.alex.hours.extra.restaurant.id";
 	private static final String mFileType = ParseConstants.KEY_FILE_TYPE;
 	public static final int TAKE_PHOTO_REQUEST = 0;
@@ -271,6 +278,19 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 			Log.i("OnResuemLoad", "loading Rest");
 			loadRestaurant();
 		}
+
+		if (getArguments() != null) {
+			if (getArguments().getString(MapFragment.NEW_RESTAURANT_MAP) != null) {
+				if (getArguments().getString(MapFragment.NEW_RESTAURANT_MAP)
+						.equals(MapFragment.NEW_RESTAURANT_MAP)) {
+					mTitleField
+							.setText(getArguments().getString(NAME_FROM_MAP));
+					mAddressField.setText(getArguments().getString(
+							ADDRESS_FROM_MAP));
+					mCityField.setText(getArguments().getString(CITY_FROM_MAP));
+				}
+			}
+		}
 	}
 
 	// Handle Results from Camera
@@ -485,17 +505,55 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 	public void onClick(View v) {
 		int id = v.getId();
 		switch (id) {
-		
+
 		case R.id.map_button:
-			if(mAddressField.getText().toString().equals("")){
-				Toast.makeText(getActivity(), R.string.toast_no_address, Toast.LENGTH_SHORT).show();
+			// if(mAddressField.getText().toString().equals("")){
+			// Toast.makeText(getActivity(), R.string.toast_no_address,
+			// Toast.LENGTH_SHORT).show();
+			// }
+			// else{
+			// String address = mAddressField.getText().toString();
+			// String map = "http://maps.google.com/maps?q="+ address;
+			// Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(map));
+			// startActivity(i);
+			// }
+
+			// Start the map fragment
+			Bundle args = new Bundle();
+			if (getArguments() != null) {
+				if (getArguments().getString(EXTRA_RESTAURANT_ID) != null) {
+					String restaurantId = (String) getArguments().getString(
+							EXTRA_RESTAURANT_ID);
+					args.putString(EXTRA_RESTAURANT_ID, restaurantId);
+				}
 			}
-			else{
-			String address = mAddressField.getText().toString();
-			String map = "http://maps.google.com/maps?q="+ address;
-			Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(map));
-			startActivity(i);
+			if (getArguments() != null) {
+				if (getArguments().getString(RestaurantListFragment.QUERY_CODE) != null) {
+					if (getArguments().getString(
+							RestaurantListFragment.QUERY_CODE).equals(
+							NEW_RESTAURANT_FROM_LIST)) {
+						args.putString(RestaurantListFragment.QUERY_CODE,
+								NEW_RESTAURANT_FROM_LIST);
+					}
+				}
 			}
+			if (getArguments() != null) {
+				if (getArguments().getString(RestaurantListFragment.QUERY_CODE) != null) {
+					if (getArguments().getString(
+							RestaurantListFragment.QUERY_CODE).equals(
+							NEW_RESTAURANT_FROM_HOME)) {
+						args.putString(RestaurantListFragment.QUERY_CODE,
+								NEW_RESTAURANT_FROM_HOME);
+					}
+				}
+			}
+			MapFragment mapFragment = new MapFragment();
+			mapFragment.setArguments(args);
+			FragmentManager fragmentManager;
+			fragmentManager = getFragmentManager();
+			fragmentManager.beginTransaction().addToBackStack(null)
+					.replace(R.id.content_frame, mapFragment).commit();
+
 			break;
 
 		case R.id.phone_button:
@@ -1066,8 +1124,7 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 				mCityField.setCompoundDrawablesWithIntrinsicBounds(0, 0,
 						android.R.drawable.ic_menu_edit, 0);
 			} else {
-				mCityField.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0,
-						0);
+				mCityField.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
 			}
 			break;
 
@@ -1153,11 +1210,36 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 		mTitleField.setText(mRestaurant.getTitle());
 		mTitleField.clearFocus();
 
+		if (getArguments() != null) {
+			if (getArguments().getString(MAP_CODE) != null
+					&& getArguments().getString(NAME_FROM_MAP) != null) {
+				mTitleField.setText(getArguments().getString(NAME_FROM_MAP));
+				mTitleField.clearFocus();
+			}
+		}
+
 		mAddressField.setText(mRestaurant.getAddress());
 		mAddressField.clearFocus();
 
+		if (getArguments() != null) {
+			if (getArguments().getString(MAP_CODE) != null
+					&& getArguments().getString(ADDRESS_FROM_MAP) != null) {
+				mAddressField.setText(getArguments()
+						.getString(ADDRESS_FROM_MAP));
+				mAddressField.clearFocus();
+			}
+		}
+
 		mCityField.setText(mRestaurant.getCity());
 		mCityField.clearFocus();
+
+		if (getArguments() != null) {
+			if (getArguments().getString(MAP_CODE) != null
+					&& getArguments().getString(CITY_FROM_MAP) != null) {
+				mCityField.setText(getArguments().getString(CITY_FROM_MAP));
+				mCityField.clearFocus();
+			}
+		}
 
 		mPhoneField.setText(mRestaurant.getPhone());
 		mPhoneField.clearFocus();
@@ -1371,6 +1453,8 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 													R.string.edit_error_message,
 													Toast.LENGTH_LONG).show();
 										}
+										// todo
+										// mMapButton.setEnabled(false);
 										mSaveButton.setEnabled(false);
 										mTakePictureButton.setEnabled(false);
 										// }

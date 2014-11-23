@@ -1,18 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.alex.hours"
-    android:versionCode="13"
-    android:versionName="2.3.1" >
+    android:versionCode="14"
+    android:versionName="3.0.0" >
 
     <uses-sdk
         android:minSdkVersion="14"
         android:targetSdkVersion="21" />
 
+    <permission
+        android:name="com.alex.hours.permission.MAPS_RECEIVE"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="com.alex.hours.permission.MAPS_RECEIVE" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
+    <!-- Required to show current location -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <!-- Required OpenGL ES 2.0. for Maps V2 -->
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
@@ -32,8 +46,7 @@
             android:label="@string/title_activity_sign_up"
             android:parentActivityName="com.alex.hours.LoginActivity" >
         </activity>
-        <activity android:name="com.alex.hours.MainActivity"
-             >
+        <activity android:name="com.alex.hours.MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -45,6 +58,13 @@
             android:label="@string/title_activity_password_recovery"
             android:parentActivityName="com.alex.hours.LoginActivity" >
         </activity>
+
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyANLw5Wgc9vhG1pBgqejTPcl5jlJYcTY2c" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
     </application>
 
 </manifest>

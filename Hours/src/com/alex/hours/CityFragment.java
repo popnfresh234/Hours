@@ -11,7 +11,6 @@ import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
@@ -21,7 +20,7 @@ import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 
-public class CityFragment extends ListFragment implements OnClickListener {
+public class CityFragment extends ListFragment{
 
 	private List<Restaurant> mRestaurants;
 	private List<String> mUniqueCities;
@@ -48,44 +47,44 @@ public class CityFragment extends ListFragment implements OnClickListener {
 		return v;
 	}
 
-	@Override
-	public void onClick(View v) {
-		int id = v.getId();
-		FragmentManager fragmentManager;
-		String searchQuery;
-		Bundle args = new Bundle();
-		RestaurantListFragment myRestaurants = new RestaurantListFragment();
-		switch (id) {
-		case R.id.city_button_vancouver:
-			searchQuery = "vancouver";
-			args.putString(RestaurantListFragment.QUERY_CODE,
-					RestaurantListFragment.SEARCH);
-			args.putString(RestaurantListFragment.QUERY, searchQuery);
-
-			myRestaurants.setArguments(args);
-			fragmentManager = getFragmentManager();
-			fragmentManager.beginTransaction()
-					.replace(R.id.content_frame, myRestaurants)
-					.addToBackStack(null).commit();
-
-			break;
-
-		case R.id.city_button_taipei:
-			searchQuery = "taipei";
-			args.putString(RestaurantListFragment.QUERY_CODE,
-					RestaurantListFragment.SEARCH);
-			args.putString(RestaurantListFragment.QUERY, searchQuery);
-
-			myRestaurants.setArguments(args);
-			fragmentManager = getFragmentManager();
-			fragmentManager.beginTransaction()
-					.replace(R.id.content_frame, myRestaurants)
-					.addToBackStack(null).commit();
-			break;
-
-		}
-
-	}
+//	@Override
+//	public void onClick(View v) {
+//		int id = v.getId();
+//		FragmentManager fragmentManager;
+//		String searchQuery;
+//		Bundle args = new Bundle();
+//		RestaurantListFragment myRestaurants = new RestaurantListFragment();
+//		switch (id) {
+//		case R.id.city_button_vancouver:
+//			searchQuery = "vancouver";
+//			args.putString(RestaurantListFragment.QUERY_CODE,
+//					RestaurantListFragment.SEARCH);
+//			args.putString(RestaurantListFragment.QUERY, searchQuery);
+//
+//			myRestaurants.setArguments(args);
+//			fragmentManager = getFragmentManager();
+//			fragmentManager.beginTransaction()
+//					.replace(R.id.content_frame, myRestaurants)
+//					.addToBackStack(null).commit();
+//
+//			break;
+//
+//		case R.id.city_button_taipei:
+//			searchQuery = "taipei";
+//			args.putString(RestaurantListFragment.QUERY_CODE,
+//					RestaurantListFragment.SEARCH);
+//			args.putString(RestaurantListFragment.QUERY, searchQuery);
+//
+//			myRestaurants.setArguments(args);
+//			fragmentManager = getFragmentManager();
+//			fragmentManager.beginTransaction()
+//					.replace(R.id.content_frame, myRestaurants)
+//					.addToBackStack(null).commit();
+//			break;
+//
+//		}
+//
+//	}
 
 	private void queryParse() {
 		getActivity().setProgressBarIndeterminateVisibility(true);

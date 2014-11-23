@@ -94,5 +94,6 @@
         <string name="restaurant_city_label">City</string>
         <string name="restaurant_city_hint">Enter City</string>
         <string name="toast_no_address">No Address Information</string>
+        <string name="button_done_text">Done</string>
 
 </resources>
