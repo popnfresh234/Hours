@@ -176,7 +176,10 @@ public class MainActivity extends FragmentActivity {
 		case 0:
 			MainActivityFragment mainActivity = new MainActivityFragment();
 			fragmentManager = getSupportFragmentManager();
-			fragmentManager.popBackStack();
+			
+			for(int i = 0; i < fragmentManager.getBackStackEntryCount(); ++i) {    
+			    fragmentManager.popBackStack();
+			}
 			fragmentManager.beginTransaction()
 					.replace(R.id.content_frame, mainActivity).commit();
 			break;

@@ -60,13 +60,14 @@ public class MapFragment extends Fragment implements OnMarkerClickListener,
 	private MarkerOptions[] places;
 	private int mUserIcon;
 	private final int MAX_PLACES = 20;
-	
-	public static final String NEW_RESTAURANT_MAP = "new_restaurant_map";
 
+	public static final String NEW_RESTAURANT_MAP = "new_restaurant_map";
 
 	private String mTitle;
 	private String mAddress;
 	private String mCity;
+	private String mPhoneNumber;
+	private String mPlaceId;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -146,32 +147,9 @@ public class MapFragment extends Fragment implements OnMarkerClickListener,
 						args.putString(RestaurantFragment.ADDRESS_FROM_MAP,
 								mAddress);
 						args.putString(RestaurantFragment.NAME_FROM_MAP, mTitle);
+						args.putString(RestaurantFragment.PHONE_FROM_MAP, mPhoneNumber);
 						args.putString(RestaurantListFragment.QUERY_CODE,
 								RestaurantFragment.MAP_CODE);
-						RestaurantFragment restaurantFragment = new RestaurantFragment();
-						restaurantFragment.setArguments(args);
-						FragmentManager fragmentManager = getFragmentManager();
-						fragmentManager.popBackStack();
-						fragmentManager
-								.beginTransaction()
-								.replace(R.id.content_frame, restaurantFragment)
-								.commit();
-					}
-				}
-				
-				if(getArguments()!=null){
-					if (getArguments().getString(RestaurantListFragment.QUERY_CODE)!=null){
-						Bundle args = new Bundle();
-						
-						args.putString(RestaurantFragment.MAP_CODE,
-								RestaurantFragment.MAP_CODE);
-						args.putString(RestaurantFragment.CITY_FROM_MAP, mCity);
-						args.putString(RestaurantFragment.ADDRESS_FROM_MAP,
-								mAddress);
-						args.putString(RestaurantFragment.NAME_FROM_MAP, mTitle);
-						args.putString(RestaurantListFragment.QUERY_CODE,
-								getArguments().getString(RestaurantListFragment.QUERY_CODE));
-						args.putString(NEW_RESTAURANT_MAP, NEW_RESTAURANT_MAP);
 						RestaurantFragment restaurantFragment = new RestaurantFragment();
 						restaurantFragment.setArguments(args);
 						FragmentManager fragmentManager = getFragmentManager();
@@ -183,7 +161,34 @@ public class MapFragment extends Fragment implements OnMarkerClickListener,
 					}
 				}
 
-				
+				if (getArguments() != null) {
+					if (getArguments().getString(
+							RestaurantListFragment.QUERY_CODE) != null) {
+						Bundle args = new Bundle();
+
+						args.putString(RestaurantFragment.MAP_CODE,
+								RestaurantFragment.MAP_CODE);
+						args.putString(RestaurantFragment.CITY_FROM_MAP, mCity);
+						args.putString(RestaurantFragment.ADDRESS_FROM_MAP,
+								mAddress);
+						args.putString(RestaurantFragment.NAME_FROM_MAP, mTitle);
+						args.putString(RestaurantFragment.PHONE_FROM_MAP, mPhoneNumber);
+						
+						args.putString(
+								RestaurantListFragment.QUERY_CODE,
+								getArguments().getString(
+										RestaurantListFragment.QUERY_CODE));
+						args.putString(NEW_RESTAURANT_MAP, NEW_RESTAURANT_MAP);
+						RestaurantFragment restaurantFragment = new RestaurantFragment();
+						restaurantFragment.setArguments(args);
+						FragmentManager fragmentManager = getFragmentManager();
+						fragmentManager.popBackStack();
+						fragmentManager
+								.beginTransaction()
+								.replace(R.id.content_frame, restaurantFragment)
+								.commit();
+					}
+				}
 
 			}
 		});
@@ -224,6 +229,11 @@ public class MapFragment extends Fragment implements OnMarkerClickListener,
 	public boolean onMarkerClick(Marker marker) {
 		Log.i("click", "click");
 
+		String detailsSearchStr = "https://maps.googleapis.com/maps/api/place/details/json?placeid="
+				+ mPlaceId + "&key=AIzaSyDlwnG0Kb5ZNLd_WQ-bEcdP9QII_Ti820I";
+
+		new GetDetails().execute(detailsSearchStr);
+
 		LatLng location = marker.getPosition();
 
 		Geocoder geocoder;
@@ -234,7 +244,7 @@ public class MapFragment extends Fragment implements OnMarkerClickListener,
 					location.longitude, 1);
 			String address = addresses.get(0).getAddressLine(0);
 			String city = addresses.get(0).getLocality();
-			//String country = addresses.get(0).getAddressLine(2);
+			// String country = addresses.get(0).getAddressLine(2);
 
 			Toast.makeText(getActivity(), address, Toast.LENGTH_SHORT).show();
 			Log.i("Address", marker.getSnippet().toString());
@@ -416,6 +426,7 @@ public class MapFragment extends Fragment implements OnMarkerClickListener,
 						}
 						vicinity = placeObject.getString("vicinity");
 						placeName = placeObject.getString("name");
+						mPlaceId = placeObject.getString("place_id");
 
 					} catch (JSONException jse) {
 						missingValue = true;
@@ -442,6 +453,62 @@ public class MapFragment extends Fragment implements OnMarkerClickListener,
 						placeMarkers[p] = mMap.addMarker(places[p]);
 				}
 			}
+		}
+	}
+
+	private class GetDetails extends AsyncTask<String, Void, String> {
+		// fetch and parse place data
+		@Override
+		protected String doInBackground(String... detailsURL) {
+			// fetch places
+			StringBuilder detailsBuilder = new StringBuilder();
+			for (String detailsSearchUrl : detailsURL) {
+				// execute search
+				HttpClient placesClient = new DefaultHttpClient();
+				try {
+					HttpGet placesGet = new HttpGet(detailsSearchUrl);
+					HttpResponse placesResponse = placesClient
+							.execute(placesGet);
+					StatusLine placeSearchStatus = placesResponse
+							.getStatusLine();
+					if (placeSearchStatus.getStatusCode() == 200) {
+						// we have an OK response
+						HttpEntity placesEntity = placesResponse.getEntity();
+						InputStream placesContent = placesEntity.getContent();
+						InputStreamReader placesInput = new InputStreamReader(
+								placesContent);
+						BufferedReader placesReader = new BufferedReader(
+								placesInput);
+
+						String lineIn;
+						while ((lineIn = placesReader.readLine()) != null) {
+							detailsBuilder.append(lineIn);
+						}
+
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			return detailsBuilder.toString();
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+
+			try {
+				JSONObject resultObject = new JSONObject(result);
+				JSONObject resulty = resultObject.getJSONObject("result");
+				Log.i("detail attempt", resultObject.toString());
+				
+				Log.i("poooop", resulty.toString());
+				Log.i("peeeee", resulty.getString("formatted_phone_number"));
+				mPhoneNumber = resulty.getString("formatted_phone_number");
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
 		}
 	}
 }

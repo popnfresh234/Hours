@@ -60,6 +60,7 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 	public static final String ADDRESS_FROM_MAP = "address_from_map";
 	public static final String CITY_FROM_MAP = "city_from_map";
 	public static final String NAME_FROM_MAP = "name_from_map";
+	public static final String PHONE_FROM_MAP = "phone_from_map";
 	public static final String MAP_CODE = "com.alex.hours.extra.map.code";
 	public static final String EXTRA_RESTAURANT_ID = "com.alex.hours.extra.restaurant.id";
 	private static final String mFileType = ParseConstants.KEY_FILE_TYPE;
@@ -288,6 +289,7 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 					mAddressField.setText(getArguments().getString(
 							ADDRESS_FROM_MAP));
 					mCityField.setText(getArguments().getString(CITY_FROM_MAP));
+					mPhoneField.setText(getArguments().getString(PHONE_FROM_MAP));
 				}
 			}
 		}
@@ -1243,6 +1245,15 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 
 		mPhoneField.setText(mRestaurant.getPhone());
 		mPhoneField.clearFocus();
+		
+		if (getArguments() != null) {
+			if (getArguments().getString(MAP_CODE) != null
+					&& getArguments().getString(PHONE_FROM_MAP) != null) {
+				mPhoneField.setText(getArguments().getString(PHONE_FROM_MAP));
+				mPhoneField.clearFocus();
+			}
+		}
+		
 
 		mSunday.setChecked(mRestaurant.getSunday());
 		mMonday.setChecked(mRestaurant.getMonday());
