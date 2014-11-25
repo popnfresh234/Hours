@@ -31,6 +31,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -47,14 +48,13 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MapFragment extends Fragment implements OnMarkerClickListener,
-		OnInfoWindowClickListener{
+		OnInfoWindowClickListener {
 
 	private MapView mMapView;
 	private GoogleMap mMap;
 	private EditText mSearchField;
 	private Button mSearchButton;
 	private Button mDoneButton;
-	private Button mLocationButton;
 	private LocationManager mLocMan;
 	private Marker mUserMarker;
 	private Marker[] placeMarkers;
@@ -96,13 +96,14 @@ public class MapFragment extends Fragment implements OnMarkerClickListener,
 
 		mLocMan = (LocationManager) getActivity().getSystemService(
 				Context.LOCATION_SERVICE);
-		
-		mLocationButton = (Button)v.findViewById(R.id.googlemaps_select_location);
-	
 
 		mSearchButton.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
+				InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+
+				inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus()
+						.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 				try {
 					String rawname = mSearchField.getText().toString();
 					String name = rawname.replace(" ", "+");
@@ -133,7 +134,7 @@ public class MapFragment extends Fragment implements OnMarkerClickListener,
 
 			@Override
 			public void onClick(View v) {
-				//Getting new information for existing restaurant
+				// Getting new information for existing restaurant
 				if (getArguments() != null) {
 					if (getArguments().getString(
 							RestaurantFragment.EXTRA_RESTAURANT_ID) != null) {
@@ -151,7 +152,8 @@ public class MapFragment extends Fragment implements OnMarkerClickListener,
 						args.putString(RestaurantFragment.ADDRESS_FROM_MAP,
 								mAddress);
 						args.putString(RestaurantFragment.NAME_FROM_MAP, mTitle);
-						args.putString(RestaurantFragment.PHONE_FROM_MAP, mPhoneNumber);
+						args.putString(RestaurantFragment.PHONE_FROM_MAP,
+								mPhoneNumber);
 						args.putString(RestaurantListFragment.QUERY_CODE,
 								RestaurantFragment.MAP_CODE);
 						RestaurantFragment restaurantFragment = new RestaurantFragment();
@@ -164,7 +166,7 @@ public class MapFragment extends Fragment implements OnMarkerClickListener,
 								.commit();
 					}
 				}
-				//Creating new restaurant
+				// Creating new restaurant
 				if (getArguments() != null) {
 					if (getArguments().getString(
 							RestaurantListFragment.QUERY_CODE) != null) {
@@ -176,19 +178,30 @@ public class MapFragment extends Fragment implements OnMarkerClickListener,
 						args.putString(RestaurantFragment.ADDRESS_FROM_MAP,
 								mAddress);
 						args.putString(RestaurantFragment.NAME_FROM_MAP, mTitle);
-						args.putString(RestaurantFragment.PHONE_FROM_MAP, mPhoneNumber);
-						
-						Log.i("MAP FRAGMENT", getArguments().getString(RestaurantListFragment.QUERY_CODE));
-						if(getArguments().getString(RestaurantListFragment.QUERY_CODE).equals(RestaurantFragment.NEW_RESTAURANT_FROM_HOME)){
-							args.putString(RestaurantListFragment.QUERY_CODE, RestaurantFragment.NEW_RESTAURANT_FROM_HOME_AND_MAP);
+						args.putString(RestaurantFragment.PHONE_FROM_MAP,
+								mPhoneNumber);
+
+						Log.i("MAP FRAGMENT",
+								getArguments().getString(
+										RestaurantListFragment.QUERY_CODE));
+						if (getArguments().getString(
+								RestaurantListFragment.QUERY_CODE).equals(
+								RestaurantFragment.NEW_RESTAURANT_FROM_HOME)) {
+							args.putString(
+									RestaurantListFragment.QUERY_CODE,
+									RestaurantFragment.NEW_RESTAURANT_FROM_HOME_AND_MAP);
 						}
-						if(getArguments().getString(RestaurantListFragment.QUERY_CODE).equals(RestaurantFragment.NEW_RESTAURANT_FROM_LIST)){
-							args.putString(RestaurantListFragment.QUERY_CODE, RestaurantFragment.NEW_RESTAURANT_FROM_LIST_AND_MAP);
+						if (getArguments().getString(
+								RestaurantListFragment.QUERY_CODE).equals(
+								RestaurantFragment.NEW_RESTAURANT_FROM_LIST)) {
+							args.putString(
+									RestaurantListFragment.QUERY_CODE,
+									RestaurantFragment.NEW_RESTAURANT_FROM_LIST_AND_MAP);
 						}
-//						args.putString(
-//								RestaurantListFragment.QUERY_CODE,
-//								getArguments().getString(
-//										RestaurantListFragment.QUERY_CODE));
+						// args.putString(
+						// RestaurantListFragment.QUERY_CODE,
+						// getArguments().getString(
+						// RestaurantListFragment.QUERY_CODE));
 						args.putString(NEW_RESTAURANT_MAP, NEW_RESTAURANT_MAP);
 						RestaurantFragment restaurantFragment = new RestaurantFragment();
 						restaurantFragment.setArguments(args);
@@ -511,7 +524,7 @@ public class MapFragment extends Fragment implements OnMarkerClickListener,
 				JSONObject resultObject = new JSONObject(result);
 				JSONObject resulty = resultObject.getJSONObject("result");
 				Log.i("detail attempt", resultObject.toString());
-				
+
 				Log.i("poooop", resulty.toString());
 				Log.i("peeeee", resulty.getString("formatted_phone_number"));
 				mPhoneNumber = resulty.getString("formatted_phone_number");
