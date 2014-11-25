@@ -57,6 +57,8 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 	public static final String NEW_RESTAURANT_FROM_LIST = "new_restaurant_from_list";
 	public static final String NEW_RESTAURANT_FROM_HOME = "new_restaurant_from_home";
 	public static final String NEW_RESTAURANT_FROM_MAP = "new_restaurant_from_map";
+	public static final String NEW_RESTAURANT_FROM_HOME_AND_MAP = "new_restaurant_from_home_and_map";
+	public static final String NEW_RESTAURANT_FROM_LIST_AND_MAP = "new_restaurant_from_list_and_map";
 	public static final String ADDRESS_FROM_MAP = "address_from_map";
 	public static final String CITY_FROM_MAP = "city_from_map";
 	public static final String NAME_FROM_MAP = "name_from_map";
@@ -277,6 +279,8 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 		// Load restaurant information if we didn't come from camera intent
 		if (!mFromCamera) {
 			Log.i("OnResuemLoad", "loading Rest");
+			Log.i("Restaurant Fragment",
+					getArguments().getString(RestaurantListFragment.QUERY_CODE));
 			loadRestaurant();
 		}
 
@@ -289,7 +293,8 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 					mAddressField.setText(getArguments().getString(
 							ADDRESS_FROM_MAP));
 					mCityField.setText(getArguments().getString(CITY_FROM_MAP));
-					mPhoneField.setText(getArguments().getString(PHONE_FROM_MAP));
+					mPhoneField.setText(getArguments()
+							.getString(PHONE_FROM_MAP));
 				}
 			}
 		}
@@ -901,6 +906,7 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 									// all restaurant view fragment
 									if (queryCode
 											.equals(NEW_RESTAURANT_FROM_HOME)) {
+										Log.i("HOME CODE", "HOME CODE");
 										FragmentManager fm = getFragmentManager();
 										fm.popBackStack();
 										RestaurantListFragment allRestaurants = new RestaurantListFragment();
@@ -908,12 +914,51 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 												.replace(R.id.content_frame,
 														allRestaurants)
 												.addToBackStack(null).commit();
-									} else {
+
+									}
+									// Came from map fragment
+									if (queryCode.equals(MAP_CODE)) {
+										Log.i("Map Code", "Map Code");
+										FragmentManager fm = getFragmentManager();
+										fm.popBackStack();
+										RestaurantListFragment allRestaurants = new RestaurantListFragment();
+										fm.beginTransaction()
+												.replace(R.id.content_frame,
+														allRestaurants)
+												.commit();
+
+									}
+									// New restaurant from home page with
+									// information from map
+									if (queryCode
+											.equals(NEW_RESTAURANT_FROM_HOME_AND_MAP)) {
+										Log.i(NEW_RESTAURANT_FROM_HOME_AND_MAP,
+												NEW_RESTAURANT_FROM_HOME_AND_MAP);
+										FragmentManager fm = getFragmentManager();
+										RestaurantListFragment allRestaurants = new RestaurantListFragment();
+										fm.beginTransaction()
+												.replace(R.id.content_frame,
+														allRestaurants)
+												.commit();
+									}
+
+									// New restaurant from list with information
+									// from map
+									if (queryCode
+											.equals(NEW_RESTAURANT_FROM_LIST_AND_MAP)) {
+										Log.i(NEW_RESTAURANT_FROM_LIST_AND_MAP,
+												NEW_RESTAURANT_FROM_LIST_AND_MAP);
+										removeFragment();
+									}
+
+									if (queryCode
+											.equals(NEW_RESTAURANT_FROM_LIST)) {
 										// If the request didn't come from the
 										// homepage, it came from restaurant
 										// list activity
 										// remove current fragment to return to
 										// list
+										Log.i("OTHER", "OTHER");
 										removeFragment();
 									}
 								}
@@ -1245,7 +1290,7 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 
 		mPhoneField.setText(mRestaurant.getPhone());
 		mPhoneField.clearFocus();
-		
+
 		if (getArguments() != null) {
 			if (getArguments().getString(MAP_CODE) != null
 					&& getArguments().getString(PHONE_FROM_MAP) != null) {
@@ -1253,7 +1298,6 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 				mPhoneField.clearFocus();
 			}
 		}
-		
 
 		mSunday.setChecked(mRestaurant.getSunday());
 		mMonday.setChecked(mRestaurant.getMonday());

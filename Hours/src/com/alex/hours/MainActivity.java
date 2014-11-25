@@ -28,7 +28,6 @@ public class MainActivity extends FragmentActivity {
 	private ListView mDrawerList;
 	private ActionBarDrawerToggle mDrawerToggle;
 	private boolean mIsDrawerLocked = false;
-
 	private CharSequence mDrawerTitle;
 	private CharSequence mTitle;
 
@@ -176,9 +175,9 @@ public class MainActivity extends FragmentActivity {
 		case 0:
 			MainActivityFragment mainActivity = new MainActivityFragment();
 			fragmentManager = getSupportFragmentManager();
-			
-			for(int i = 0; i < fragmentManager.getBackStackEntryCount(); ++i) {    
-			    fragmentManager.popBackStack();
+
+			for (int i = 0; i < fragmentManager.getBackStackEntryCount(); ++i) {
+				fragmentManager.popBackStack();
 			}
 			fragmentManager.beginTransaction()
 					.replace(R.id.content_frame, mainActivity).commit();
@@ -190,10 +189,12 @@ public class MainActivity extends FragmentActivity {
 			RestaurantListFragment favorites = new RestaurantListFragment();
 			favorites.setArguments(args);
 			fragmentManager = getSupportFragmentManager();
+
 			fragmentManager.popBackStack();
 			fragmentManager.beginTransaction()
 					.replace(R.id.content_frame, favorites)
 					.addToBackStack(null).commit();
+
 			break;
 		case 2:
 
@@ -202,10 +203,17 @@ public class MainActivity extends FragmentActivity {
 			RestaurantListFragment allRestaurants = new RestaurantListFragment();
 			allRestaurants.setArguments(args);
 			fragmentManager = getSupportFragmentManager();
-			fragmentManager.popBackStack();
-			fragmentManager.beginTransaction()
-					.replace(R.id.content_frame, allRestaurants)
-					.addToBackStack(null).commit();
+			if (fragmentManager.getBackStackEntryCount() <= 1) {
+				fragmentManager.popBackStack();
+				fragmentManager.beginTransaction()
+						.replace(R.id.content_frame, allRestaurants)
+						.addToBackStack(null).commit();
+			}
+			if (fragmentManager.getBackStackEntryCount() >= 2) {
+				fragmentManager.popBackStack();
+				fragmentManager.beginTransaction()
+						.replace(R.id.content_frame, allRestaurants).commit();
+			}
 			break;
 		case 3:
 
@@ -214,10 +222,17 @@ public class MainActivity extends FragmentActivity {
 			RestaurantListFragment myRestaurants = new RestaurantListFragment();
 			myRestaurants.setArguments(args);
 			fragmentManager = getSupportFragmentManager();
-			fragmentManager.popBackStack();
-			fragmentManager.beginTransaction()
-					.replace(R.id.content_frame, myRestaurants)
-					.addToBackStack(null).commit();
+			if (fragmentManager.getBackStackEntryCount() <= 1) {
+				fragmentManager.popBackStack();
+				fragmentManager.beginTransaction()
+						.replace(R.id.content_frame, myRestaurants)
+						.addToBackStack(null).commit();
+			}
+			if (fragmentManager.getBackStackEntryCount() >= 2) {
+				fragmentManager.popBackStack();
+				fragmentManager.beginTransaction()
+						.replace(R.id.content_frame, myRestaurants).commit();
+			}
 			break;
 
 		case 4:
@@ -230,10 +245,18 @@ public class MainActivity extends FragmentActivity {
 			RestaurantListFragment recentRestaurantsOneDay = new RestaurantListFragment();
 			recentRestaurantsOneDay.setArguments(args);
 			fragmentManager = getSupportFragmentManager();
-			fragmentManager.popBackStack();
-			fragmentManager.beginTransaction()
-					.replace(R.id.content_frame, recentRestaurantsOneDay)
-					.addToBackStack(null).commit();
+			if (fragmentManager.getBackStackEntryCount() <= 1) {
+				fragmentManager.popBackStack();
+				fragmentManager.beginTransaction()
+						.replace(R.id.content_frame, recentRestaurantsOneDay)
+						.addToBackStack(null).commit();
+			}
+			if (fragmentManager.getBackStackEntryCount() >= 2) {
+				fragmentManager.popBackStack();
+				fragmentManager.beginTransaction()
+						.replace(R.id.content_frame, recentRestaurantsOneDay)
+						.commit();
+			}
 			break;
 
 		case 5:
@@ -246,10 +269,18 @@ public class MainActivity extends FragmentActivity {
 			RestaurantListFragment recentRestaurantsOneWeek = new RestaurantListFragment();
 			recentRestaurantsOneWeek.setArguments(args);
 			fragmentManager = getSupportFragmentManager();
-			fragmentManager.popBackStack();
-			fragmentManager.beginTransaction()
-					.replace(R.id.content_frame, recentRestaurantsOneWeek)
-					.addToBackStack(null).commit();
+			if (fragmentManager.getBackStackEntryCount() <= 1) {
+				fragmentManager.popBackStack();
+				fragmentManager.beginTransaction()
+						.replace(R.id.content_frame, recentRestaurantsOneWeek)
+						.addToBackStack(null).commit();
+			}
+			if (fragmentManager.getBackStackEntryCount() >= 2) {
+				fragmentManager.popBackStack();
+				fragmentManager.beginTransaction()
+						.replace(R.id.content_frame, recentRestaurantsOneWeek)
+						.commit();
+			}
 			break;
 
 		case 6:
@@ -262,21 +293,37 @@ public class MainActivity extends FragmentActivity {
 			RestaurantListFragment recentUpdate = new RestaurantListFragment();
 			recentUpdate.setArguments(args);
 			fragmentManager = getSupportFragmentManager();
-			fragmentManager.popBackStack();
-			fragmentManager.beginTransaction()
-					.replace(R.id.content_frame, recentUpdate)
-					.addToBackStack(null).commit();
+			if (fragmentManager.getBackStackEntryCount() <= 1) {
+				fragmentManager.popBackStack();
+				fragmentManager.beginTransaction()
+						.replace(R.id.content_frame, recentUpdate)
+						.addToBackStack(null).commit();
+			}
+			if (fragmentManager.getBackStackEntryCount() >= 2) {
+				fragmentManager.popBackStack();
+				fragmentManager.beginTransaction()
+						.replace(R.id.content_frame, recentUpdate).commit();
+			}
 			break;
 
 		case 7:
 
-			
 			CityFragment cityFragment = new CityFragment();
 			fragmentManager = getSupportFragmentManager();
-			fragmentManager.popBackStack();
-			fragmentManager.beginTransaction()
-					.replace(R.id.content_frame, cityFragment)
-					.addToBackStack(null).commit();
+
+			Log.i("STACKMAIN:",
+					String.valueOf(fragmentManager.getBackStackEntryCount()));
+			if (fragmentManager.getBackStackEntryCount() >= 2) {
+				fragmentManager.popBackStack();
+			}
+			// fragmentManager.popBackStack();
+			if (fragmentManager.getBackStackEntryCount() < 2) {
+				fragmentManager.beginTransaction()
+						.replace(R.id.content_frame, cityFragment)
+						.addToBackStack(null).commit();
+			}
+			
+
 			break;
 
 		}

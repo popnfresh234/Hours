@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,7 +17,8 @@ import android.widget.EditText;
 
 import com.parse.ParseUser;
 
-public class MainActivityFragment extends Fragment implements OnFocusChangeListener{
+public class MainActivityFragment extends Fragment implements
+		OnFocusChangeListener {
 
 	private EditText mSearchField;
 	private Button mSearchButton;
@@ -26,7 +28,7 @@ public class MainActivityFragment extends Fragment implements OnFocusChangeListe
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setHasOptionsMenu(true);
-		//Check if logged in, if not boot to login screen
+		// Check if logged in, if not boot to login screen
 		if (ParseUser.getCurrentUser() == null) {
 			navigateToLogin();
 		}
@@ -47,6 +49,8 @@ public class MainActivityFragment extends Fragment implements OnFocusChangeListe
 		super.onResume();
 		getActivity().setProgressBarIndeterminateVisibility(false);
 		mSearchField.setText("");
+		
+
 
 	}
 
@@ -55,9 +59,12 @@ public class MainActivityFragment extends Fragment implements OnFocusChangeListe
 			Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.fragment_main, container, false);
 
+		FragmentManager fm = getFragmentManager();
+		Log.i("Fragment Counter", String.valueOf(fm.getBackStackEntryCount()));
+
 		mSearchField = (EditText) v.findViewById(R.id.searchField);
 		mSearchField.setOnFocusChangeListener(this);
-		
+
 		mSearchButton = (Button) v.findViewById(R.id.searchButton);
 		mSearchButton.setOnClickListener(new View.OnClickListener() {
 
@@ -78,13 +85,14 @@ public class MainActivityFragment extends Fragment implements OnFocusChangeListe
 
 			}
 		});
-		
-		mAllRestaurantsButton = (Button)v.findViewById(R.id.allRestaurantsButton);
+
+		mAllRestaurantsButton = (Button) v
+				.findViewById(R.id.allRestaurantsButton);
 		mAllRestaurantsButton.setOnClickListener(new View.OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
-				
+
 				Bundle args = new Bundle();
 				args.putString(RestaurantListFragment.QUERY_CODE,
 						RestaurantListFragment.ALL_RESTAURATNS);
@@ -95,7 +103,7 @@ public class MainActivityFragment extends Fragment implements OnFocusChangeListe
 				fragmentManager.beginTransaction()
 						.replace(R.id.content_frame, allRestaurants)
 						.addToBackStack(null).commit();
-				
+
 			}
 		});
 
@@ -133,35 +141,33 @@ public class MainActivityFragment extends Fragment implements OnFocusChangeListe
 		case R.id.action_quit:
 			getActivity().finish();
 			break;
-//		case R.id.action_my_restaurants:
-//			// attach code so next fragment knows how it was created
-//
-//			args.putString(RestaurantListFragment.QUERY_CODE,
-//					RestaurantListFragment.MY_RESTAURATNS);
-//			RestaurantListFragment myRestaurants = new RestaurantListFragment();
-//			myRestaurants.setArguments(args);
-//			fragmentManager = getFragmentManager();
-//			fragmentManager.beginTransaction()
-//					.replace(R.id.content_frame, myRestaurants)
-//					.addToBackStack(null).commit();
-//			break;
-//		case R.id.action_all_restaurants:
-//			// attach code so next fragment knows how it was created
-//			args.putString(RestaurantListFragment.QUERY_CODE,
-//					RestaurantListFragment.ALL_RESTAURATNS);
-//			RestaurantListFragment allRestaurants = new RestaurantListFragment();
-//			allRestaurants.setArguments(args);
-//			fragmentManager = getFragmentManager();
-//			fragmentManager.beginTransaction()
-//					.replace(R.id.content_frame, allRestaurants)
-//					.addToBackStack(null).commit();
-//
-//			break;
+		// case R.id.action_my_restaurants:
+		// // attach code so next fragment knows how it was created
+		//
+		// args.putString(RestaurantListFragment.QUERY_CODE,
+		// RestaurantListFragment.MY_RESTAURATNS);
+		// RestaurantListFragment myRestaurants = new RestaurantListFragment();
+		// myRestaurants.setArguments(args);
+		// fragmentManager = getFragmentManager();
+		// fragmentManager.beginTransaction()
+		// .replace(R.id.content_frame, myRestaurants)
+		// .addToBackStack(null).commit();
+		// break;
+		// case R.id.action_all_restaurants:
+		// // attach code so next fragment knows how it was created
+		// args.putString(RestaurantListFragment.QUERY_CODE,
+		// RestaurantListFragment.ALL_RESTAURATNS);
+		// RestaurantListFragment allRestaurants = new RestaurantListFragment();
+		// allRestaurants.setArguments(args);
+		// fragmentManager = getFragmentManager();
+		// fragmentManager.beginTransaction()
+		// .replace(R.id.content_frame, allRestaurants)
+		// .addToBackStack(null).commit();
+		//
+		// break;
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
-	
 
 	private void navigateToLogin() {
 		Intent intent = new Intent(getActivity(), LoginActivity.class);
@@ -169,8 +175,8 @@ public class MainActivityFragment extends Fragment implements OnFocusChangeListe
 		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
 		startActivity(intent);
 	}
-	
-	//set the search icon when focused on the edittext
+
+	// set the search icon when focused on the edittext
 	@Override
 	public void onFocusChange(View v, boolean hasFocus) {
 		int id = v.getId();
@@ -180,10 +186,11 @@ public class MainActivityFragment extends Fragment implements OnFocusChangeListe
 				mSearchField.setCompoundDrawablesWithIntrinsicBounds(0, 0,
 						android.R.drawable.ic_menu_search, 0);
 			} else {
-				mSearchField.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+				mSearchField
+						.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
 			}
 			break;
 		}
-		
+
 	}
 }

@@ -47,13 +47,14 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MapFragment extends Fragment implements OnMarkerClickListener,
-		OnInfoWindowClickListener {
+		OnInfoWindowClickListener{
 
 	private MapView mMapView;
 	private GoogleMap mMap;
 	private EditText mSearchField;
 	private Button mSearchButton;
 	private Button mDoneButton;
+	private Button mLocationButton;
 	private LocationManager mLocMan;
 	private Marker mUserMarker;
 	private Marker[] placeMarkers;
@@ -95,6 +96,9 @@ public class MapFragment extends Fragment implements OnMarkerClickListener,
 
 		mLocMan = (LocationManager) getActivity().getSystemService(
 				Context.LOCATION_SERVICE);
+		
+		mLocationButton = (Button)v.findViewById(R.id.googlemaps_select_location);
+	
 
 		mSearchButton.setOnClickListener(new OnClickListener() {
 
@@ -129,7 +133,7 @@ public class MapFragment extends Fragment implements OnMarkerClickListener,
 
 			@Override
 			public void onClick(View v) {
-
+				//Getting new information for existing restaurant
 				if (getArguments() != null) {
 					if (getArguments().getString(
 							RestaurantFragment.EXTRA_RESTAURANT_ID) != null) {
@@ -160,7 +164,7 @@ public class MapFragment extends Fragment implements OnMarkerClickListener,
 								.commit();
 					}
 				}
-
+				//Creating new restaurant
 				if (getArguments() != null) {
 					if (getArguments().getString(
 							RestaurantListFragment.QUERY_CODE) != null) {
@@ -174,10 +178,17 @@ public class MapFragment extends Fragment implements OnMarkerClickListener,
 						args.putString(RestaurantFragment.NAME_FROM_MAP, mTitle);
 						args.putString(RestaurantFragment.PHONE_FROM_MAP, mPhoneNumber);
 						
-						args.putString(
-								RestaurantListFragment.QUERY_CODE,
-								getArguments().getString(
-										RestaurantListFragment.QUERY_CODE));
+						Log.i("MAP FRAGMENT", getArguments().getString(RestaurantListFragment.QUERY_CODE));
+						if(getArguments().getString(RestaurantListFragment.QUERY_CODE).equals(RestaurantFragment.NEW_RESTAURANT_FROM_HOME)){
+							args.putString(RestaurantListFragment.QUERY_CODE, RestaurantFragment.NEW_RESTAURANT_FROM_HOME_AND_MAP);
+						}
+						if(getArguments().getString(RestaurantListFragment.QUERY_CODE).equals(RestaurantFragment.NEW_RESTAURANT_FROM_LIST)){
+							args.putString(RestaurantListFragment.QUERY_CODE, RestaurantFragment.NEW_RESTAURANT_FROM_LIST_AND_MAP);
+						}
+//						args.putString(
+//								RestaurantListFragment.QUERY_CODE,
+//								getArguments().getString(
+//										RestaurantListFragment.QUERY_CODE));
 						args.putString(NEW_RESTAURANT_MAP, NEW_RESTAURANT_MAP);
 						RestaurantFragment restaurantFragment = new RestaurantFragment();
 						restaurantFragment.setArguments(args);

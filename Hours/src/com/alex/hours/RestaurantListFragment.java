@@ -717,5 +717,4 @@ public class RestaurantListFragment extends ListFragment {
 			queryParse(1, null, null);
 		}
 	}
-
 }

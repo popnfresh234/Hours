@@ -20,12 +20,19 @@ import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 
-public class CityFragment extends ListFragment{
+public class CityFragment extends ListFragment {
 
 	private List<Restaurant> mRestaurants;
 	private List<String> mUniqueCities;
 	private ListView mListView;
 	private SwipeRefreshLayout mSwipeRefreshLayout;
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		FragmentManager fm = getFragmentManager();
+		//Log.i("STACKCITY", String.valueOf(fm.getBackStackEntryCount()));
+		super.onCreate(savedInstanceState);
+	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,44 +54,44 @@ public class CityFragment extends ListFragment{
 		return v;
 	}
 
-//	@Override
-//	public void onClick(View v) {
-//		int id = v.getId();
-//		FragmentManager fragmentManager;
-//		String searchQuery;
-//		Bundle args = new Bundle();
-//		RestaurantListFragment myRestaurants = new RestaurantListFragment();
-//		switch (id) {
-//		case R.id.city_button_vancouver:
-//			searchQuery = "vancouver";
-//			args.putString(RestaurantListFragment.QUERY_CODE,
-//					RestaurantListFragment.SEARCH);
-//			args.putString(RestaurantListFragment.QUERY, searchQuery);
-//
-//			myRestaurants.setArguments(args);
-//			fragmentManager = getFragmentManager();
-//			fragmentManager.beginTransaction()
-//					.replace(R.id.content_frame, myRestaurants)
-//					.addToBackStack(null).commit();
-//
-//			break;
-//
-//		case R.id.city_button_taipei:
-//			searchQuery = "taipei";
-//			args.putString(RestaurantListFragment.QUERY_CODE,
-//					RestaurantListFragment.SEARCH);
-//			args.putString(RestaurantListFragment.QUERY, searchQuery);
-//
-//			myRestaurants.setArguments(args);
-//			fragmentManager = getFragmentManager();
-//			fragmentManager.beginTransaction()
-//					.replace(R.id.content_frame, myRestaurants)
-//					.addToBackStack(null).commit();
-//			break;
-//
-//		}
-//
-//	}
+	// @Override
+	// public void onClick(View v) {
+	// int id = v.getId();
+	// FragmentManager fragmentManager;
+	// String searchQuery;
+	// Bundle args = new Bundle();
+	// RestaurantListFragment myRestaurants = new RestaurantListFragment();
+	// switch (id) {
+	// case R.id.city_button_vancouver:
+	// searchQuery = "vancouver";
+	// args.putString(RestaurantListFragment.QUERY_CODE,
+	// RestaurantListFragment.SEARCH);
+	// args.putString(RestaurantListFragment.QUERY, searchQuery);
+	//
+	// myRestaurants.setArguments(args);
+	// fragmentManager = getFragmentManager();
+	// fragmentManager.beginTransaction()
+	// .replace(R.id.content_frame, myRestaurants)
+	// .addToBackStack(null).commit();
+	//
+	// break;
+	//
+	// case R.id.city_button_taipei:
+	// searchQuery = "taipei";
+	// args.putString(RestaurantListFragment.QUERY_CODE,
+	// RestaurantListFragment.SEARCH);
+	// args.putString(RestaurantListFragment.QUERY, searchQuery);
+	//
+	// myRestaurants.setArguments(args);
+	// fragmentManager = getFragmentManager();
+	// fragmentManager.beginTransaction()
+	// .replace(R.id.content_frame, myRestaurants)
+	// .addToBackStack(null).commit();
+	// break;
+	//
+	// }
+	//
+	// }
 
 	private void queryParse() {
 		getActivity().setProgressBarIndeterminateVisibility(true);
@@ -145,6 +152,7 @@ public class CityFragment extends ListFragment{
 		fragmentManager.beginTransaction()
 				.replace(R.id.content_frame, myRestaurants)
 				.addToBackStack(null).commit();
+
 	}
 
 	protected OnRefreshListener mOnRefreshListener = new OnRefreshListener() {
