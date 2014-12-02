@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.alex.hours"
-    android:versionCode="15"
-    android:versionName="3.1.0" >
+    android:versionCode="16"
+    android:versionName="3.2.0" >
 
     <uses-sdk
         android:minSdkVersion="14"
@@ -61,7 +61,7 @@
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyANLw5Wgc9vhG1pBgqejTPcl5jlJYcTY2c" />
+            android:value="AIzaSyC9Iv7Lps-iQz1w0P0Hjoi6nT6LebeljTE" />
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />

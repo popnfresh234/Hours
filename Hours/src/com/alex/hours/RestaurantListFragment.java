@@ -505,6 +505,7 @@ public class RestaurantListFragment extends ListFragment {
 		// create query
 		Log.i("QueryCode", "code: " + mQueryCode);
 		ParseQuery<Restaurant> query = new ParseQuery<Restaurant>("Restaurant");
+		query.setLimit(1000);
 		if (ParseUser.getCurrentUser() != null) {
 
 			// Query for Date related searches
@@ -531,6 +532,7 @@ public class RestaurantListFragment extends ListFragment {
 			if (mQueryCode == ALL_RESTAURANT_QUERY_CODE) {
 				query.whereExists(ParseConstants.KEY_RESTAURANT_TITLE);
 				query.addAscendingOrder(ParseConstants.KEY_RESTAURANT_LOWERCASE_TITLE);
+				
 			}
 
 			// query for search
@@ -555,9 +557,11 @@ public class RestaurantListFragment extends ListFragment {
 				queries.add(queryTitle);
 				queries.add(queryAddress);
 				queries.add(queryCity);
-
+				
 				query = ParseQuery.or(queries);
 				query.addAscendingOrder(ParseConstants.KEY_RESTAURANT_LOWERCASE_TITLE);
+				query.setLimit(1000);
+				
 
 			}
 			// Query for favorites
@@ -567,10 +571,12 @@ public class RestaurantListFragment extends ListFragment {
 						.getRelation(ParseConstants.RELATION_FAVORITE);
 				query = relation.getQuery();
 				query.addAscendingOrder(ParseConstants.KEY_RESTAURANT_LOWERCASE_TITLE);
+
 			}
 			if (getArguments() == null) {
 				query.whereExists(ParseConstants.KEY_RESTAURANT_TITLE);
 				query.addAscendingOrder(ParseConstants.KEY_RESTAURANT_LOWERCASE_TITLE);
+
 			}
 			
 			// execute query
@@ -582,6 +588,7 @@ public class RestaurantListFragment extends ListFragment {
 					// Add to the adapter for processing so that stars can be
 					// set
 					mRestaurants = restaurants;
+					Log.i("NUMBER OF RESTAURANTS", String.valueOf(mRestaurants.size()));
 					ParseUser user = ParseUser.getCurrentUser();
 					ParseRelation<Restaurant> relation = user
 							.getRelation(ParseConstants.RELATION_FAVORITE);

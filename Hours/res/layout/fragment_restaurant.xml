@@ -24,6 +24,15 @@
 
         <TextView
             style="@style/restaurantTextView"
+            android:text="Category" />
+
+        <Spinner
+            android:id="@+id/category_spinner"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp" />
+
+        <TextView
+            style="@style/restaurantTextView"
             android:text="@string/restaurant_address_label" />
 
         <LinearLayout

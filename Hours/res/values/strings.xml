@@ -80,20 +80,28 @@
         <item>Take Picture</item>
         <item>Choose Picture</item>
     </string-array>
-        <string name="recover_password_button_label">Recover Password</string>
-        <string name="recover_password_subtitle">Enter your e-mail address</string>
-        <string name="title_activity_password_recovery">Password Recovery</string>
-        <string name="password_recovery_e_mail_sent">Password recovery e-mail sent!</string>
-        <string name="invalid_e_mail">Invalid e-mail address</string>
-        <string name="e_mail_not_found">E-mail address not found</string>
-        <string name="menu_quit_label">Quit</string>
-        <string name="recover_password_text">Forgot your password?</string>
-        <string name="city_button_vancouver">Vancouver</string>
-        <string name="city_button_taipei">Taipei</string>
-        <string name="edit_text_hint_city">Enter City Name</string>
-        <string name="restaurant_city_label">City</string>
-        <string name="restaurant_city_hint">Enter City</string>
-        <string name="toast_no_address">No Address Information</string>
-        <string name="button_done_text">Done</string>
+    <string-array name="category_array">
+        <item>Choose a Category</item>
+        <item>Chinese</item>
+        <item>Japanese</item>
+        <item>Korean</item>
+        <item>Western</item>
+    </string-array>
+
+    <string name="recover_password_button_label">Recover Password</string>
+    <string name="recover_password_subtitle">Enter your e-mail address</string>
+    <string name="title_activity_password_recovery">Password Recovery</string>
+    <string name="password_recovery_e_mail_sent">Password recovery e-mail sent!</string>
+    <string name="invalid_e_mail">Invalid e-mail address</string>
+    <string name="e_mail_not_found">E-mail address not found</string>
+    <string name="menu_quit_label">Quit</string>
+    <string name="recover_password_text">Forgot your password?</string>
+    <string name="city_button_vancouver">Vancouver</string>
+    <string name="city_button_taipei">Taipei</string>
+    <string name="edit_text_hint_city">Enter City Name</string>
+    <string name="restaurant_city_label">City</string>
+    <string name="restaurant_city_hint">Enter City</string>
+    <string name="toast_no_address">No Address Information</string>
+    <string name="button_done_text">Done</string>
 
 </resources>

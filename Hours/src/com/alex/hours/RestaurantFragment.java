@@ -2,6 +2,9 @@ package com.alex.hours;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 
@@ -29,6 +32,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -36,6 +40,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -78,6 +83,7 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 	protected Uri mMediaUri;
 	// Declare views
 	private EditText mTitleField;
+	private Spinner mSpinner;
 	private EditText mAddressField;
 	private ImageButton mMapButton;
 	private EditText mCityField;
@@ -170,6 +176,14 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 		// Setup fields
 		mTitleField = (EditText) v.findViewById(R.id.restaurant_title);
 		mTitleField.setOnFocusChangeListener(this);
+
+		mSpinner = (Spinner) v.findViewById(R.id.category_spinner);
+		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+				getActivity(), R.array.category_array,
+				android.R.layout.simple_spinner_dropdown_item);
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		mSpinner.setAdapter(adapter);
+		mSpinner.setPrompt("test");
 
 		mAddressField = (EditText) v.findViewById(R.id.restaurant_address);
 		mAddressField.setOnFocusChangeListener(this);
@@ -1200,6 +1214,10 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 		restaurant.setLowerCaseTitle(mTitleField.getText().toString()
 				.toLowerCase());
 
+		if (!mSpinner.getSelectedItem().toString().equals("Choose a Category")) {
+			restaurant.setCategory(mSpinner.getSelectedItem().toString());
+		}
+
 		restaurant.setAddress(mAddressField.getText().toString());
 		restaurant.setLowerCaseAddress(mAddressField.getText().toString()
 				.toLowerCase());
@@ -1262,6 +1280,22 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 					&& getArguments().getString(NAME_FROM_MAP) != null) {
 				mTitleField.setText(getArguments().getString(NAME_FROM_MAP));
 				mTitleField.clearFocus();
+			}
+		}
+
+		// Figure out what the category is and set spinner to that item
+		if (!(mRestaurant.getCategory() == null)) {
+
+			String compareValue = mRestaurant.getCategory();
+			ArrayAdapter<CharSequence> adapter = ArrayAdapter
+					.createFromResource(getActivity(), R.array.category_array,
+							android.R.layout.simple_spinner_dropdown_item);
+			adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+			mSpinner.setAdapter(adapter);
+			if (!compareValue.equals(null)) {
+				int SpinnerPosition = adapter.getPosition(compareValue);
+				mSpinner.setSelection(SpinnerPosition);
+				SpinnerPosition = 0;
 			}
 		}
 
@@ -1364,6 +1398,10 @@ public class RestaurantFragment extends Fragment implements OnClickListener,
 		mRestaurant.setTitle(mTitleField.getText().toString());
 		mRestaurant.setLowerCaseTitle(mTitleField.getText().toString()
 				.toLowerCase());
+
+		if (!mSpinner.getSelectedItem().toString().equals("Choose a Category")) {
+			mRestaurant.setCategory(mSpinner.getSelectedItem().toString());
+		}
 
 		mRestaurant.setAddress(mAddressField.getText().toString());
 		mRestaurant.setLowerCaseAddress(mAddressField.getText().toString()

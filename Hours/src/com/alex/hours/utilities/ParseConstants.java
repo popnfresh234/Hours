@@ -25,6 +25,7 @@ public final class ParseConstants {
 	public static final String KEY_AUTHOR = "author";
 	public static final String KEY_RESTAURANT_TITLE = "restaurantTitle";
 	public static final String KEY_RESTAURANT_LOWERCASE_TITLE = "lowercaseTitle";
+	public static final String KEY_RESTAURANT_CATEGORY = "restaurantCategory";
 	public static final String KEY_ADDRESS = "address";
 	public static final String KEY_ADDRESS_LOWER_CASE = "lowercaseAddress";
 	public static final String KEY_PHONE = "phone";

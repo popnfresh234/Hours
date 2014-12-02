@@ -26,6 +26,9 @@ public class RestaurantAdapter extends ArrayAdapter<Restaurant> {
 		mRestaurants = restaurants;
 		mFavorites = favorites;
 	}
+	
+	
+
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {

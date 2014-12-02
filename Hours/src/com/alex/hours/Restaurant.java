@@ -38,6 +38,14 @@ public class Restaurant extends ParseObject {
 	public void setLowerCaseTitle(String lowerCaseTitle) {
 		put(ParseConstants.KEY_RESTAURANT_LOWERCASE_TITLE, lowerCaseTitle);
 	}
+	
+	public String getCategory(){
+		return getString(ParseConstants.KEY_RESTAURANT_CATEGORY);
+	}
+	
+	public void setCategory(String category){
+		put(ParseConstants.KEY_RESTAURANT_CATEGORY, category);
+	}
 
 	public String getAddress() {
 		return getString(ParseConstants.KEY_ADDRESS);

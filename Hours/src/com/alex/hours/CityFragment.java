@@ -30,7 +30,7 @@ public class CityFragment extends ListFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		FragmentManager fm = getFragmentManager();
-		//Log.i("STACKCITY", String.valueOf(fm.getBackStackEntryCount()));
+		// Log.i("STACKCITY", String.valueOf(fm.getBackStackEntryCount()));
 		super.onCreate(savedInstanceState);
 	}
 
@@ -108,11 +108,15 @@ public class CityFragment extends ListFragment {
 				for (int i = 0; i < mRestaurants.size(); i++) {
 					Restaurant restaurant = (Restaurant) mRestaurants.get(i);
 					String cityName = restaurant.getCity();
-					if (mUniqueCities.size() > 0
-							&& mUniqueCities.contains(cityName)) {
-						Log.i("not unique", "contained");
+					if (cityName.equals("")) {
+						Log.i("empty city", "empty city");
 					} else {
-						mUniqueCities.add(cityName);
+						if (mUniqueCities.size() > 0
+								&& mUniqueCities.contains(cityName)) {
+							Log.i("not unique", "contained");
+						} else {
+							mUniqueCities.add(cityName);
+						}
 					}
 				}
 
